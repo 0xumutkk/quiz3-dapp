@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, Target, BookOpen, CheckCircle, Home } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Category, EducationalArticle } from '@/types';
 import { getCategoryTheme, getCategoryEmoji } from '@/lib/utils';
@@ -79,7 +79,7 @@ export function ArticlePage() {
               </div>
               <div className={`flex items-center gap-2 text-${theme.light}/80`}>
                 <CheckCircle className="h-4 w-4" />
-                <span>Covers all quiz answers</span>
+                <span>Comprehensive learning guide</span>
               </div>
             </div>
           </CardHeader>
@@ -122,36 +122,6 @@ export function ArticlePage() {
           </Card>
         ))}
 
-        {/* Quiz Answers Section */}
-        <Card className={`bg-gradient-to-r from-${theme.bg}/30 to-${theme.surface}/30 border-${theme.border} shadow-${theme.shadow} backdrop-blur-sm`}>
-          <CardHeader>
-            <CardTitle className={`flex items-center gap-3 text-${theme.primary}`}>
-              <CheckCircle className="h-6 w-6" />
-              Quiz Answers Covered in This Article
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid gap-4">
-              {article.quizAnswers.map((answer, index) => (
-                <div key={index} className={`bg-${theme.surface}/50 rounded-lg p-4 border-${theme.border}`}>
-                  <div className="flex items-start gap-3">
-                    <div className={`h-8 w-8 rounded-lg bg-${theme.primary}/20 flex items-center justify-center text-${theme.primary} font-semibold text-sm flex-shrink-0`}>
-                      {index + 1}
-                    </div>
-                    <div className="flex-1">
-                      <p className={`text-${theme.light}/90 mb-2`}>
-                        <strong className={`text-${theme.accent}`}>Correct Answer:</strong> {answer.answer}
-                      </p>
-                      <p className={`text-${theme.light}/80 text-sm`}>
-                        {answer.explanation}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Conclusion */}
         <Card className={`bg-${theme.surface}/80 border-${theme.border} shadow-${theme.shadow} backdrop-blur-sm`}>

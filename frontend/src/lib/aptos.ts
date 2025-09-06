@@ -6,6 +6,7 @@ const aptosConfig = new AptosConfig({
 });
 
 export const aptos = new Aptos(aptosConfig);
+export const aptosClient = aptos; // Alias for compatibility
 
 // Contract configuration
 export const MODULE_ADDRESS = import.meta.env.VITE_MODULE_ADDRESS || "0x1"; // Will be updated after deployment

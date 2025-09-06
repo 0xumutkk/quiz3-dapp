@@ -17,11 +17,6 @@ export interface EducationalArticle {
     conclusion: string;
     relatedTopics: string[];
   };
-  quizAnswers: {
-    questionId: string;
-    answer: string;
-    explanation: string;
-  }[];
 }
 
 export const EDUCATIONAL_ARTICLES: Record<Category, EducationalArticle> = {
@@ -94,59 +89,7 @@ export const EDUCATIONAL_ARTICLES: Record<Category, EducationalArticle> = {
         'Layer 1 Blockchains',
         'Move Programming Language'
       ]
-    },
-    quizAnswers: [
-      {
-        questionId: 'aptos_1',
-        answer: 'AptosBFT',
-        explanation: 'Aptos uses AptosBFT, a Byzantine Fault Tolerant consensus protocol that enables high throughput and low latency.'
-      },
-      {
-        questionId: 'aptos_2',
-        answer: 'Move',
-        explanation: 'Move is a resource-oriented programming language designed for safe and flexible smart contract development on Aptos.'
-      },
-      {
-        questionId: 'aptos_3',
-        answer: 'APT',
-        explanation: 'APT is the native utility token used for transaction fees, staking, and governance on the Aptos network.'
-      },
-      {
-        questionId: 'aptos_4',
-        answer: '160,000+',
-        explanation: 'Aptos can theoretically process over 160,000 TPS due to its parallel execution engine and optimistic concurrency control.'
-      },
-      {
-        questionId: 'aptos_5',
-        answer: 'Block-STM',
-        explanation: 'Block-STM (Block-based Software Transactional Memory) enables parallel transaction execution by detecting conflicts and ensuring correctness.'
-      },
-      {
-        questionId: 'aptos_6',
-        answer: '2022',
-        explanation: 'Aptos was officially launched in October 2022, marking a significant milestone in blockchain technology.'
-      },
-      {
-        questionId: 'aptos_7',
-        answer: 'Higher throughput',
-        explanation: 'Aptos is designed for high throughput, capable of processing over 160,000 transactions per second.'
-      },
-      {
-        questionId: 'aptos_8',
-        answer: 'Byzantine Fault Tolerance',
-        explanation: 'BFT stands for Byzantine Fault Tolerance, a consensus mechanism that can handle up to one-third of malicious nodes.'
-      },
-      {
-        questionId: 'aptos_9',
-        answer: 'All of the above',
-        explanation: 'Aptos has used multiple testnet names including Devnet, Testnet, and AIT-3 for different phases of development.'
-      },
-      {
-        questionId: 'aptos_10',
-        answer: '1,000,000 APT',
-        explanation: 'Aptos requires a minimum stake of 1,000,000 APT to become a validator, ensuring network security.'
-      }
-    ]
+    }
   },
   defi: {
     id: 'defi_comprehensive_guide',
@@ -217,59 +160,7 @@ export const EDUCATIONAL_ARTICLES: Record<Category, EducationalArticle> = {
         'Decentralized Governance',
         'Smart Contract Security'
       ]
-    },
-    quizAnswers: [
-      {
-        questionId: 'defi_1',
-        answer: 'Automated Market Maker',
-        explanation: 'AMMs use mathematical formulas to price assets and enable decentralized trading without order books.'
-      },
-      {
-        questionId: 'defi_2',
-        answer: 'Temporary price volatility loss',
-        explanation: 'Impermanent loss occurs when the price ratio of deposited tokens changes, resulting in less value than holding tokens separately.'
-      },
-      {
-        questionId: 'defi_3',
-        answer: 'Peer-to-peer token swapping',
-        explanation: 'DEXs facilitate direct peer-to-peer cryptocurrency trading without intermediaries or custody of user funds.'
-      },
-      {
-        questionId: 'defi_4',
-        answer: 'Total Value Locked',
-        explanation: 'TVL measures the total amount of cryptocurrency deposited in DeFi protocols and represents their adoption and trust.'
-      },
-      {
-        questionId: 'defi_5',
-        answer: 'Earning rewards by providing liquidity',
-        explanation: 'Yield farming involves providing liquidity to DeFi protocols in exchange for token rewards, fees, or other incentives.'
-      },
-      {
-        questionId: 'defi_6',
-        answer: 'Community governance',
-        explanation: 'DAOs enable decentralized governance where token holders vote on protocol changes, treasury management, and other important decisions.'
-      },
-      {
-        questionId: 'defi_7',
-        answer: 'A loan that must be repaid in the same transaction',
-        explanation: 'Flash loans are uncollateralized loans that must be borrowed and repaid within a single transaction, enabling complex arbitrage strategies.'
-      },
-      {
-        questionId: 'defi_8',
-        answer: 'Annual Percentage Yield',
-        explanation: 'APY represents the real rate of return earned on an investment, taking into account compound interest.'
-      },
-      {
-        questionId: 'defi_9',
-        answer: 'All of the above',
-        explanation: 'DeFi liquidity providers face multiple risks including smart contract vulnerabilities, impermanent loss, and regulatory uncertainty.'
-      },
-      {
-        questionId: 'defi_10',
-        answer: 'To vote on protocol changes',
-        explanation: 'Governance tokens give holders the right to vote on protocol upgrades, parameter changes, and treasury management decisions.'
-      }
-    ]
+    }
   },
   nft: {
     id: 'nft_comprehensive_guide',
@@ -341,59 +232,7 @@ export const EDUCATIONAL_ARTICLES: Record<Category, EducationalArticle> = {
         'NFT Marketplaces',
         'Blockchain Standards'
       ]
-    },
-    quizAnswers: [
-      {
-        questionId: 'nft_1',
-        answer: 'Non-Fungible Token',
-        explanation: 'NFTs are unique digital assets that represent ownership of specific items or content on the blockchain.'
-      },
-      {
-        questionId: 'nft_2',
-        answer: 'Both ERC-721 and ERC-1155',
-        explanation: 'Both ERC-721 (single NFTs) and ERC-1155 (multi-token standard) are widely used for creating NFTs with different capabilities.'
-      },
-      {
-        questionId: 'nft_3',
-        answer: 'Decentralized storage',
-        explanation: 'IPFS provides decentralized, immutable storage for NFT metadata, ensuring it remains accessible even if original servers fail.'
-      },
-      {
-        questionId: 'nft_4',
-        answer: 'Access to exclusive content',
-        explanation: 'Utility NFTs provide holders with access to exclusive content, services, or experiences beyond just ownership of digital assets.'
-      },
-      {
-        questionId: 'nft_5',
-        answer: 'Creator earnings from resales',
-        explanation: 'NFT royalties are automatic payments to original creators each time their NFT is resold on secondary markets.'
-      },
-      {
-        questionId: 'nft_6',
-        answer: 'ERC-721 is for single NFTs, ERC-1155 is for multiple',
-        explanation: 'ERC-721 is designed for unique, single NFTs while ERC-1155 supports multiple token types in a single contract.'
-      },
-      {
-        questionId: 'nft_7',
-        answer: 'To describe the NFT properties and content',
-        explanation: 'NFT metadata contains information about the NFT such as name, description, image URL, and other attributes.'
-      },
-      {
-        questionId: 'nft_8',
-        answer: 'In-game items and characters',
-        explanation: 'Gaming NFTs often represent in-game items, characters, weapons, or land that players can own, trade, and use.'
-      },
-      {
-        questionId: 'nft_9',
-        answer: 'Decentralized and permanent storage',
-        explanation: 'IPFS provides decentralized, content-addressed storage that ensures NFT images remain accessible even if the original server goes offline.'
-      },
-      {
-        questionId: 'nft_10',
-        answer: 'To buy, sell, and trade NFTs',
-        explanation: 'NFT marketplaces are platforms where users can discover, buy, sell, and trade NFTs, providing liquidity and price discovery.'
-      }
-    ]
+    }
   },
   zk: {
     id: 'zk_comprehensive_guide',
@@ -464,59 +303,7 @@ export const EDUCATIONAL_ARTICLES: Record<Category, EducationalArticle> = {
         'Layer 2 Solutions',
         'Verifiable Computation'
       ]
-    },
-    quizAnswers: [
-      {
-        questionId: 'zk_1',
-        answer: 'Zero Knowledge',
-        explanation: 'Zero-Knowledge proofs allow one party to prove knowledge of information without revealing the information itself.'
-      },
-      {
-        questionId: 'zk_2',
-        answer: 'Privacy and succinctness',
-        explanation: 'zk-SNARKs provide both privacy (hiding transaction details) and succinctness (very small proof sizes) for blockchain applications.'
-      },
-      {
-        questionId: 'zk_3',
-        answer: 'Small proof size',
-        explanation: 'Succinct means the proof size is small and verification is fast, regardless of the complexity of the original computation.'
-      },
-      {
-        questionId: 'zk_4',
-        answer: 'Initial parameter generation',
-        explanation: 'Trusted setup generates initial cryptographic parameters that must be created securely and the setup data must be destroyed.'
-      },
-      {
-        questionId: 'zk_5',
-        answer: 'Blockchain scaling',
-        explanation: 'zk-rollups bundle many transactions into one, reducing blockchain congestion while maintaining security through zero-knowledge proofs.'
-      },
-      {
-        questionId: 'zk_6',
-        answer: 'Scalable Transparent ARgument of Knowledge',
-        explanation: 'STARK stands for Scalable Transparent ARgument of Knowledge, a type of zero-knowledge proof that doesn\'t require a trusted setup.'
-      },
-      {
-        questionId: 'zk_7',
-        answer: 'Smaller proof sizes',
-        explanation: 'zk-SNARKs typically produce smaller proof sizes compared to zk-STARKs, making them more efficient for certain applications.'
-      },
-      {
-        questionId: 'zk_8',
-        answer: 'Privacy-preserving transactions',
-        explanation: 'Zero-knowledge proofs are commonly used to create privacy-preserving transactions where transaction details are hidden while maintaining verifiability.'
-      },
-      {
-        questionId: 'zk_9',
-        answer: 'To generate public parameters',
-        explanation: 'Trusted setup ceremonies generate the initial public parameters needed for zk-SNARKs, and the setup data must be destroyed to maintain security.'
-      },
-      {
-        questionId: 'zk_10',
-        answer: 'Privacy preservation',
-        explanation: 'Zero-knowledge proofs allow users to prove they have certain credentials or attributes without revealing the actual credential details, preserving privacy.'
-      }
-    ]
+    }
   }
 };
 

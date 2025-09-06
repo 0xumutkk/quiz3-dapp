@@ -161,3 +161,23 @@ export interface QuizAnalytics {
   difficulty_performance: Record<string, number>;
   streak_achievements: number;
 }
+
+// Educational Article types
+export interface EducationalArticle {
+  id: string;
+  category: Category;
+  title: string;
+  subtitle: string;
+  readingTime: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  content: {
+    introduction: string;
+    sections: Array<{
+      title: string;
+      content: string;
+      keyPoints: string[];
+    }>;
+    conclusion: string;
+    relatedTopics: string[];
+  };
+}

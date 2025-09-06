@@ -44,11 +44,6 @@ export function Header() {
           <div className="relative">
             <img src="/logo.svg" alt="Quiz3" className="h-10 w-auto header-logo-mobile-responsive" />
           </div>
-          <div>
-            <div className="text-xs text-slate-400 -mt-1">
-              Web3 Knowledge Arena
-            </div>
-          </div>
         </div>
 
         {/* Season Countdown */}

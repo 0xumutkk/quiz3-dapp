@@ -1,10 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
-import { Trophy, Zap, Coins, Palette, Shield, TrendingUp } from 'lucide-react';
+import { Trophy, Zap, Coins, Palette, Shield, TrendingUp, BookOpen, Clock, Target } from 'lucide-react';
 import { CategoryCard } from '@/components/CategoryCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Category } from '@/types';
+import { getCategoryEmoji } from '@/lib/utils';
+import { getEducationalArticle } from '@/data/articles';
 
 const categories = [
   {
@@ -57,21 +59,39 @@ export function HomePage() {
     navigate('/claim');
   };
 
+  const handleViewArticle = (category: Category) => {
+    const article = getEducationalArticle(category);
+    navigate('/article', { 
+      state: { 
+        article, 
+        category 
+      } 
+    });
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-12">
       {/* Hero Section */}
       <div className="text-center space-y-6 py-12">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <Trophy className="h-12 w-12 text-trivia-blue" />
-          <h1 className="text-4xl sm:text-6xl font-bold gradient-text">
-            Quiz3
-          </h1>
+        <div className="flex items-center justify-center mb-6">
+          <img 
+            src="/logo.svg" 
+            alt="Quiz3" 
+            className="h-20 sm:h-24 w-auto"
+          />
         </div>
         
-        <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-          Test your Web3 knowledge across 4 exciting categories. Earn points, climb the leaderboard, 
-          and claim weekly rewards on the Aptos blockchain.
-        </p>
+        <div className="space-y-6">
+          <h2 className="text-xl sm:text-2xl font-caption text-slate-200 tracking-wide">
+            Web3 Knowledge Arena
+          </h2>
+          
+          <p className="text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed font-body">
+            Master the fundamentals of Web3 technology through interactive quizzes. 
+            Challenge yourself across <span className="text-trivia-blue font-semibold">4 specialized categories</span>, 
+            compete on the leaderboard, and earn rewards on the Aptos blockchain.
+          </p>
+        </div>
 
         {!connected && (
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-6 max-w-md mx-auto">
@@ -87,24 +107,24 @@ export function HomePage() {
         <Card className="text-center">
           <CardContent className="p-6">
             <TrendingUp className="h-8 w-8 text-trivia-blue mx-auto mb-3" />
-            <div className="text-3xl font-bold text-white mb-2">1,247</div>
-            <div className="text-sm text-slate-400">Active Players</div>
+            <div className="text-3xl font-display text-white mb-2">1,247</div>
+            <div className="text-sm font-caption text-slate-400">Active Players</div>
           </CardContent>
         </Card>
         
         <Card className="text-center">
           <CardContent className="p-6">
             <Trophy className="h-8 w-8 text-trivia-cyan mx-auto mb-3" />
-            <div className="text-3xl font-bold text-white mb-2">8,932</div>
-            <div className="text-sm text-slate-400">Games Played</div>
+            <div className="text-3xl font-display text-white mb-2">8,932</div>
+            <div className="text-sm font-caption text-slate-400">Games Played</div>
           </CardContent>
         </Card>
         
         <Card className="text-center">
           <CardContent className="p-6">
             <Coins className="h-8 w-8 text-trivia-orange mx-auto mb-3" />
-            <div className="text-3xl font-bold text-white mb-2">5,000</div>
-            <div className="text-sm text-slate-400">APT Rewards Pool</div>
+            <div className="text-3xl font-display text-white mb-2">5,000</div>
+            <div className="text-sm font-caption text-slate-400">APT Rewards Pool</div>
           </CardContent>
         </Card>
       </div>
@@ -112,11 +132,13 @@ export function HomePage() {
       {/* Category Selection */}
       <div className="space-y-6">
         <div className="text-center">
-          <h2 className="text-3xl font-bold gradient-text mb-3">
+          <h2 className="text-2xl sm:text-3xl font-display gradient-text mb-3">
             Choose Your Category
           </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto">
-            Each category contains 5 carefully crafted questions. Answer quickly and accurately to maximize your score!
+          
+          <p className="text-base text-slate-400 max-w-2xl mx-auto font-body">
+            Each category contains <span className="text-trivia-blue font-semibold">10 carefully crafted questions</span>. 
+            Answer quickly and accurately to maximize your score and climb the leaderboard!
           </p>
         </div>
 
@@ -172,6 +194,96 @@ export function HomePage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Educational Articles */}
+      <div className="space-y-6">
+        <div className="text-center">
+          <h2 className="text-2xl sm:text-3xl font-display gradient-text mb-3">
+            📚 Educational Resources
+          </h2>
+          
+          <p className="text-base text-slate-400 max-w-2xl mx-auto font-body">
+            Deep dive into comprehensive guides covering all quiz topics. 
+            <span className="text-trivia-blue font-semibold">Perfect for learning</span> before taking quizzes or 
+            <span className="text-trivia-cyan font-semibold"> expanding your knowledge</span> after completion!
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {categories.map((cat) => {
+            const article = getEducationalArticle(cat.category);
+            return (
+              <Card 
+                key={cat.category}
+                className="group hover:scale-105 transition-all duration-300 cursor-pointer bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700/50 hover:border-trivia-blue/50"
+                onClick={() => handleViewArticle(cat.category)}
+              >
+                <CardContent className="p-6">
+                  <div className="text-center space-y-4">
+                    {/* Category Icon */}
+                    <div className="flex items-center justify-center">
+                      <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-trivia-blue/20 to-trivia-purple/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <span className="text-3xl">{getCategoryEmoji(cat.category)}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Article Info */}
+                    <div className="space-y-2">
+                      <h3 className="font-semibold text-white group-hover:text-trivia-blue transition-colors">
+                        {article.title}
+                      </h3>
+                      
+                      <div className="flex items-center justify-center gap-4 text-xs text-slate-400">
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          <span>{article.readingTime}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Target className="h-3 w-3" />
+                          <span className="capitalize">{article.difficulty}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Read Button */}
+                    <Button 
+                      size="sm" 
+                      className="w-full bg-gradient-to-r from-trivia-blue to-trivia-purple hover:from-trivia-purple hover:to-trivia-blue text-white border-0"
+                    >
+                      <BookOpen className="h-4 w-4 mr-2" />
+                      Read Article
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Articles Info */}
+        <Card className="bg-blue-500/10 border-blue-500/30">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-4">
+              <div className="h-12 w-12 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                <BookOpen className="h-6 w-6 text-blue-400" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-blue-300 mb-2">Comprehensive Learning Resources</h3>
+                <p className="text-sm text-slate-300 mb-3">
+                  Each article provides comprehensive coverage of the topic, including key concepts, practical examples, and real-world applications. 
+                  Perfect for both beginners and advanced learners!
+                </p>
+                <div className="flex flex-wrap gap-2 text-xs">
+                  <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded-lg">Comprehensive Coverage</span>
+                  <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded-lg">Beginner to Advanced</span>
+                  <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded-lg">Practical Examples</span>
+                  <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded-lg">Free Access</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* How to Play */}
       <Card>

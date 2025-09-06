@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
-import { Gift, Clock, CheckCircle, AlertCircle, ExternalLink } from 'lucide-react';
+import { Gift, Clock, CheckCircle, AlertCircle, ExternalLink, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { getActiveSeason, getUserClaimStatus, type SeasonInfo, type UserClaimStatus } from '@/lib/view-functions/season';
+import { claimRewards, type ClaimParams } from '@/lib/entry-functions/claim';
+import { generateSeasonMerkleTree, createSampleRewards } from '@/lib/merkle-tree';
 
 // Dummy claim data
 const DUMMY_CLAIMS = [
@@ -37,22 +40,81 @@ const DUMMY_CLAIMS = [
 export function ClaimPage() {
   const { connected, account } = useWallet();
   const [claimingSeasonId, setClaimingSeasonId] = useState<string | null>(null);
+  const [, setSeasonInfo] = useState<SeasonInfo | null>(null);
+  const [, setUserClaimStatus] = useState<UserClaimStatus | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch season and user data
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!connected || !account?.address) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch active season info
+        const season = await getActiveSeason();
+        setSeasonInfo(season);
+
+        // Fetch user claim status
+        const claimStatus = await getUserClaimStatus(account.address);
+        setUserClaimStatus(claimStatus);
+
+      } catch (err) {
+        console.error('Error fetching claim data:', err);
+        setError('Failed to load claim data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [connected, account?.address]);
 
   const handleClaim = async (seasonId: string, amount: number) => {
-    if (!connected) return;
+    if (!connected || !account?.address) return;
 
     setClaimingSeasonId(seasonId);
     
     try {
-      // TODO: Implement actual claim transaction
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate transaction
+      // Generate Merkle proof for the user
+      const sampleRewards = createSampleRewards(parseInt(seasonId));
+      const { proofs } = generateSeasonMerkleTree(sampleRewards);
       
-      // Show success message
-      alert(`Successfully claimed ${amount} APT!`);
+      // Find user's proof (in real app, this would come from backend)
+      const userProof = proofs.get(account.address);
+      if (!userProof) {
+        throw new Error('No rewards found for this address');
+      }
+
+      // Prepare claim parameters
+      const claimParams: ClaimParams = {
+        season: parseInt(seasonId),
+        amount: amount.toString(),
+        merkleProof: userProof.proof,
+        merkleRoot: userProof.root,
+      };
+
+      // Execute claim transaction
+      const result = await claimRewards(account, claimParams);
+      
+      if (result.success) {
+        alert(`Successfully claimed ${amount} APT for season ${seasonId}!`);
+        // Refresh data
+        const claimStatus = await getUserClaimStatus(account.address);
+        setUserClaimStatus(claimStatus);
+      } else {
+        throw new Error(result.error || 'Claim failed');
+      }
       
     } catch (error) {
       console.error('Claim failed:', error);
-      alert('Claim failed. Please try again.');
+      alert(`Claim failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setClaimingSeasonId(null);
     }
@@ -74,6 +136,45 @@ export function ClaimPage() {
             <p className="text-slate-400 mb-6">
               Connect your wallet to view and claim your weekly trivia rewards.
             </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <Card className="text-center">
+          <CardContent className="p-12">
+            <Loader2 className="h-16 w-16 text-trivia-purple mx-auto mb-6 animate-spin" />
+            <h2 className="text-2xl font-bold gradient-text mb-4">
+              Loading Claim Data
+            </h2>
+            <p className="text-slate-400 mb-6">
+              Fetching your reward information from the blockchain...
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <Card className="text-center">
+          <CardContent className="p-12">
+            <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-6" />
+            <h2 className="text-2xl font-bold text-red-500 mb-4">
+              Error Loading Data
+            </h2>
+            <p className="text-slate-400 mb-6">
+              {error}
+            </p>
+            <Button onClick={() => window.location.reload()}>
+              Try Again
+            </Button>
           </CardContent>
         </Card>
       </div>

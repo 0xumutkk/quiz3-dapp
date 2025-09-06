@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Timer, AlertTriangle } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { getTimerColor, cn, getCategoryTheme } from '@/lib/utils';
+import { cn, getCategoryTheme } from '@/lib/utils';
 import { Category } from '@/types';
 
 interface QuizTimerProps {
@@ -15,7 +15,6 @@ interface QuizTimerProps {
 export function QuizTimer({ timeLeft, maxTime, onTimeUp, isPaused = false, category }: QuizTimerProps) {
   const [isWarning, setIsWarning] = useState(false);
   const percentage = (timeLeft / maxTime) * 100;
-  const timerColorClass = getTimerColor(timeLeft, maxTime);
   const theme = getCategoryTheme(category);
 
   useEffect(() => {

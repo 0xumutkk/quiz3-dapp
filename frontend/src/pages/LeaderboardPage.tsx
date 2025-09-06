@@ -121,12 +121,12 @@ export function LeaderboardPage() {
         </p>
       </div>
 
-      {/* Season Info */}
+      {/* Weekly Race Info */}
       <Card className="bg-gradient-to-r from-trivia-purple/20 to-trivia-blue/20 border-trivia-purple/30">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-bold text-white mb-1">Current Season</h3>
+              <h3 className="font-bold text-white mb-1">Current Weekly Race</h3>
               <p className="text-sm text-slate-300">Week 42 • Nov 13-19, 2024</p>
             </div>
             <div className="text-right">
