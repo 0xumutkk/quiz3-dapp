@@ -17,9 +17,6 @@ A comprehensive Web3 trivia dApp built on the Aptos blockchain, featuring mobile
 
 **🎮 [Try Quiz3 Now](https://quiz3-dapp.vercel.app)** | **📚 [View Documentation](https://aptos.dev/)**
 
-### 🎥 Demo Video
-*Coming Soon: Interactive demo showcasing the complete user journey*
-
 </div>
 
 ---
@@ -32,7 +29,7 @@ Quiz3 is a cutting-edge Web3 trivia application that combines education with gam
 
 <div align="center">
 
-![Quiz3 Mobile App](./screenshots/main-app.png)
+![Quiz3 Mobile App](https://github.com/user-attachments/assets/d4c5c950-0357-4469-bb69-d02d9f8c10c2)
 
 *Quiz3 - Web3 Knowledge Arena: Mobile-first design with vibrant gradients and intuitive user experience*
 
