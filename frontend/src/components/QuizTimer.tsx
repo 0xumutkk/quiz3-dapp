@@ -7,12 +7,10 @@ import { Category } from '@/types';
 interface QuizTimerProps {
   timeLeft: number;
   maxTime: number;
-  onTimeUp: () => void;
-  isPaused?: boolean;
   category: Category;
 }
 
-export function QuizTimer({ timeLeft, maxTime, onTimeUp, isPaused = false, category }: QuizTimerProps) {
+export function QuizTimer({ timeLeft, maxTime, category }: QuizTimerProps) {
   const [isWarning, setIsWarning] = useState(false);
   const percentage = (timeLeft / maxTime) * 100;
   const theme = getCategoryTheme(category);
@@ -22,11 +20,8 @@ export function QuizTimer({ timeLeft, maxTime, onTimeUp, isPaused = false, categ
     setIsWarning(timeLeft <= 5 && timeLeft > 0);
   }, [timeLeft]);
 
-  useEffect(() => {
-    if (timeLeft <= 0 && !isPaused) {
-      onTimeUp();
-    }
-  }, [timeLeft, isPaused, onTimeUp]);
+  // Note: onTimeUp is now handled in the parent component's timer countdown
+  // to prevent race conditions and multiple calls
 
   return (
     <div className="w-full max-w-2xl mx-auto">

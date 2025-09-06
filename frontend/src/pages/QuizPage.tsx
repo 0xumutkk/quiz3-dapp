@@ -48,28 +48,9 @@ export function QuizPage() {
     setQuestions(categoryQuestions);
   }, [connected, category, navigate]);
 
-  // Timer countdown
-  useEffect(() => {
-    if (isPaused || showResult || timeLeft <= 0) return;
-
-    const timer = setTimeout(() => {
-      setTimeLeft(time => time - 1);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [timeLeft, isPaused, showResult]);
-
-  // Handle time up
-  const handleTimeUp = useCallback(() => {
-    if (selectedAnswer === undefined && !showResult) {
-      // Auto-submit with no answer
-      handleAnswerSubmit(-1, -1); // -1 indicates no answer
-    }
-  }, [selectedAnswer, showResult]);
-
   // Handle answer selection
   const handleAnswerSubmit = useCallback((shuffledIndex: number, originalIndex: number) => {
-    if (showResult) return;
+    if (showResult || isPaused) return;
 
     const startTime = Date.now() - (QUESTION_TIME_LIMIT - timeLeft) * 1000;
     const elapsedMs = Date.now() - startTime;
@@ -109,7 +90,7 @@ export function QuizPage() {
     setTimeout(() => {
       handleNextQuestion();
     }, isCorrect ? 1500 : 2500); // Longer delay for wrong answers to show educational content
-  }, [currentQuestionIndex, questions, timeLeft, streak, showResult]);
+  }, [currentQuestionIndex, questions, timeLeft, streak, showResult, isPaused]);
 
   // Handle next question
   const handleNextQuestion = useCallback(() => {
@@ -133,6 +114,28 @@ export function QuizPage() {
     setTimeLeft(QUESTION_TIME_LIMIT);
     setIsPaused(false);
   }, [currentQuestionIndex, questions.length, navigate, category, responses, totalScore]);
+
+  // Timer countdown
+  useEffect(() => {
+    if (isPaused || showResult || timeLeft <= 0) return;
+
+    const timer = setTimeout(() => {
+      setTimeLeft(time => {
+        if (time <= 1) {
+          // Timer is about to reach 0, trigger time up
+          setTimeout(() => {
+            if (selectedAnswer === undefined && !showResult && !isPaused) {
+              handleAnswerSubmit(-1, -1);
+            }
+          }, 0);
+          return 0;
+        }
+        return time - 1;
+      });
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [timeLeft, isPaused, showResult, selectedAnswer, handleAnswerSubmit]);
 
   // Handle back button
   const handleBack = () => {
@@ -214,8 +217,6 @@ export function QuizPage() {
       <QuizTimer
         timeLeft={timeLeft}
         maxTime={QUESTION_TIME_LIMIT}
-        onTimeUp={handleTimeUp}
-        isPaused={isPaused}
         category={category!}
       />
 
