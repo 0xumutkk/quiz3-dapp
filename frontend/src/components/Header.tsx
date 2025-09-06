@@ -37,15 +37,15 @@ export function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-xl header-mobile-responsive">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <div className="flex items-center gap-3">
           <div className="relative">
-            <img src="/quiz3-logo.svg" alt="Quiz3" className="h-10 w-auto" />
+            <img src="/logo.svg" alt="Quiz3" className="h-10 w-auto header-logo-mobile-responsive" />
           </div>
           <div>
-            <div className="text-xs text-slate-400">
+            <div className="text-xs text-slate-400 -mt-1">
               Web3 Knowledge Arena
             </div>
           </div>
@@ -63,7 +63,7 @@ export function Header() {
         </div>
 
         {/* Mobile Season Display */}
-        <div className="sm:hidden flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-800/50">
+        <div className="sm:hidden flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-800/50 header-countdown-mobile-responsive">
           <Clock className="h-3 w-3 text-trivia-blue" />
           <span className="text-xs font-mono text-trivia-blue">
             {timeLeft}

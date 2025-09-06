@@ -31,7 +31,7 @@ export function QuizTimer({ timeLeft, maxTime, onTimeUp, isPaused = false }: Qui
       {/* Timer Display */}
       <div className="flex items-center justify-center gap-3 mb-4">
         <div className={cn(
-          "flex items-center gap-2 px-4 py-2 rounded-xl border transition-all duration-300",
+          "flex items-center gap-2 px-4 py-2 rounded-xl border transition-all duration-300 quiz-timer-mobile-responsive",
           {
             "bg-red-500/20 border-red-500/50 animate-pulse": isWarning,
             "bg-slate-800/50 border-slate-700/50": !isWarning,

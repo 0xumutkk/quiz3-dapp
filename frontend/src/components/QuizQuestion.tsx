@@ -90,7 +90,7 @@ export function QuizQuestion({
             <div className="h-8 w-8 rounded-full bg-gradient-primary flex items-center justify-center text-white font-bold text-sm">
               ?
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white leading-relaxed flex-1">
+            <h2 className="text-xl sm:text-2xl font-bold text-white leading-relaxed flex-1 quiz-question-mobile-responsive">
               {question.text}
             </h2>
           </div>

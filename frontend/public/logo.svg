@@ -1,0 +1,20 @@
+<svg width="100" height="36" viewBox="0 0 100 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Minimalist Quiz3 Logo -->
+  
+  <!-- 'Q' as a prominent icon -->
+  <rect x="0" y="0" width="36" height="36" rx="8" fill="url(#mainGradient)"/>
+  <text x="8" y="28" font-family="Montserrat, sans-serif" font-size="30" font-weight="bold" fill="white">Q</text>
+  
+  <!-- 'uiz' text (subtle, integrated) -->
+  <text x="38" y="28" font-family="Inter, sans-serif" font-size="22" font-weight="bold" fill="#E0E0E0">uiz</text>
+  
+  <!-- The '3' in a vibrant accent color, slightly larger -->
+  <text x="72" y="28" font-family="Montserrat, sans-serif" font-size="26" font-weight="bold" fill="#EC4899">3</text>
+  
+  <defs>
+    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+  </defs>
+</svg>

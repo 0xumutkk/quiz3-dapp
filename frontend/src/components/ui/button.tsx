@@ -27,7 +27,7 @@ const buttonVariants = cva(
         lg: "h-14 rounded-2xl px-8 text-base mobile-button",
         xl: "h-16 rounded-2xl px-10 text-lg",
         icon: "h-10 w-10",
-        quiz: "w-full p-4 text-lg font-medium min-h-16",
+        quiz: "w-full p-4 text-lg font-medium min-h-16 quiz-option-mobile-responsive",
       },
     },
     defaultVariants: {

@@ -90,7 +90,7 @@ export function WalletButton() {
       <Button
         onClick={handleConnect}
         disabled={isConnecting}
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 wallet-button-mobile-responsive"
       >
         <Wallet className="h-4 w-4" />
         {isConnecting ? 'Connecting...' : 'Connect Wallet'}

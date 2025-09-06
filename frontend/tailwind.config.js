@@ -52,21 +52,27 @@ module.exports = {
         },
         // Custom trivia game colors - vibrant gradient palette
         'trivia': {
-          'purple': '#8b5cf6',
-          'blue': '#3b82f6', 
-          'cyan': '#06b6d4',
-          'teal': '#14b8a6',
-          'emerald': '#10b981',
-          'orange': '#f97316',
-          'red': '#ef4444',
-          'pink': '#ec4899',
-        }
+          'purple': '#8B5CF6',
+          'blue': '#3B82F6', 
+          'cyan': '#06B6D4',
+          'teal': '#14B8A6',
+          'emerald': '#10B981',
+          'orange': '#F97316',
+          'red': '#EF4444',
+          'pink': '#EC4899',
+          'dark-purple': '#5a2e9e',
+          'dark-blue': '#2a5a9e',
+          'light-blue': '#60a5fa',
+          'light-purple': '#a78bfa',
+          'green': '#22c55e',
+          'yellow': '#eab308',
+        },
       },
       backgroundImage: {
-        'gradient-primary': 'linear-gradient(135deg, #8b5cf6 0%, #3b82f6 50%, #06b6d4 100%)',
-        'gradient-secondary': 'linear-gradient(135deg, #f97316 0%, #ec4899 100%)',
-        'gradient-success': 'linear-gradient(135deg, #10b981 0%, #14b8a6 100%)',
-        'gradient-error': 'linear-gradient(135deg, #ef4444 0%, #f97316 100%)',
+        'gradient-primary': 'linear-gradient(135deg, var(--tw-gradient-stops) from-trivia-purple to-trivia-blue)',
+        'gradient-secondary': 'linear-gradient(135deg, var(--tw-gradient-stops) from-trivia-orange to-trivia-pink)',
+        'gradient-success': 'linear-gradient(135deg, var(--tw-gradient-stops) from-trivia-green to-trivia-teal)',
+        'gradient-error': 'linear-gradient(135deg, var(--tw-gradient-stops) from-trivia-red to-trivia-orange)',
         'gradient-radial': 'radial-gradient(ellipse at center, var(--tw-gradient-stops))',
         'hero-gradient': 'linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #312e81 100%)',
       },
@@ -75,6 +81,7 @@ module.exports = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
         '2xl': '1rem',
+        '3xl': '1.5rem',
       },
       keyframes: {
         "accordion-down": {
@@ -105,6 +112,10 @@ module.exports = {
           "0%": { transform: "scale(1)", opacity: 1 },
           "50%": { transform: "scale(1.1)", opacity: 0.8 },
           "100%": { transform: "scale(1)", opacity: 1 },
+        },
+        "pop-in": {
+          "0%": { opacity: 0, transform: "scale(0.8)" },
+          "100%": { opacity: 1, transform: "scale(1)" },
         }
       },
       animation: {
@@ -114,12 +125,14 @@ module.exports = {
         "slide-up": "slide-up 0.4s ease-out",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         "countdown": "countdown 1s ease-in-out infinite",
+        "pop-in": "pop-in 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55)",
       },
       screens: {
         'xs': '475px',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        heading: ['Montserrat', 'sans-serif'],
       },
       fontSize: {
         '2xs': '0.625rem',
