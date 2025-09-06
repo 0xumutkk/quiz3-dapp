@@ -1,0 +1,183 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 263 70% 50%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 263 70% 50%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* Custom component styles */
+  .gradient-text {
+    @apply bg-gradient-to-r from-trivia-purple via-trivia-blue to-trivia-cyan bg-clip-text text-transparent;
+  }
+  
+  .card-glow {
+    @apply shadow-lg shadow-trivia-purple/20 border border-trivia-purple/30;
+  }
+  
+  .card-glow:hover {
+    @apply shadow-xl shadow-trivia-purple/40 border-trivia-purple/50 transform scale-[1.02];
+  }
+  
+  .button-gradient {
+    @apply bg-gradient-primary text-white font-semibold py-3 px-6 rounded-2xl;
+    @apply hover:shadow-lg hover:shadow-trivia-purple/30 transform hover:scale-105;
+    @apply active:scale-95 transition-all duration-200;
+  }
+  
+  .quiz-option {
+    @apply w-full p-4 rounded-xl border-2 border-slate-700 bg-slate-800/50;
+    @apply hover:border-trivia-blue hover:bg-slate-700/50 transition-all duration-200;
+    @apply text-left font-medium text-lg;
+  }
+  
+  .quiz-option.selected {
+    @apply border-trivia-blue bg-trivia-blue/10;
+  }
+  
+  .quiz-option.correct {
+    @apply border-green-500 bg-green-500/10 text-green-100;
+  }
+  
+  .quiz-option.incorrect {
+    @apply border-red-500 bg-red-500/10 text-red-100;
+  }
+  
+  .progress-bar {
+    @apply h-2 bg-slate-700 rounded-full overflow-hidden;
+  }
+  
+  .progress-fill {
+    @apply h-full bg-gradient-primary transition-all duration-1000 ease-linear;
+  }
+  
+  .leaderboard-card {
+    @apply bg-slate-800/50 border border-slate-700 rounded-xl p-4;
+    @apply hover:bg-slate-700/50 hover:border-trivia-blue/50 transition-all duration-200;
+  }
+  
+  .category-card {
+    @apply relative overflow-hidden rounded-2xl p-6 cursor-pointer;
+    @apply transform transition-all duration-300 hover:scale-105 hover:shadow-2xl;
+    @apply border border-slate-700/50;
+  }
+  
+  .category-card::before {
+    @apply absolute inset-0 opacity-10 transition-opacity duration-300;
+    content: '';
+  }
+  
+  .category-card:hover::before {
+    @apply opacity-20;
+  }
+  
+  .category-card.aptos {
+    @apply bg-gradient-to-br from-trivia-purple/20 to-trivia-blue/20;
+    @apply hover:from-trivia-purple/30 hover:to-trivia-blue/30;
+  }
+  
+  .category-card.defi {
+    @apply bg-gradient-to-br from-trivia-blue/20 to-trivia-cyan/20;
+    @apply hover:from-trivia-blue/30 hover:to-trivia-cyan/30;
+  }
+  
+  .category-card.nft {
+    @apply bg-gradient-to-br from-trivia-cyan/20 to-trivia-emerald/20;
+    @apply hover:from-trivia-cyan/30 hover:to-trivia-emerald/30;
+  }
+  
+  .category-card.zk {
+    @apply bg-gradient-to-br from-trivia-pink/20 to-trivia-orange/20;
+    @apply hover:from-trivia-pink/30 hover:to-trivia-orange/30;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Loading spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Pulse effect for buttons */
+@keyframes pulse-button {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.pulse-button {
+  animation: pulse-button 2s ease-in-out infinite;
+}
+
+/* Mobile-first responsive design helpers */
+@media (max-width: 640px) {
+  .mobile-padding {
+    @apply px-4 py-2;
+  }
+  
+  .mobile-text {
+    @apply text-sm;
+  }
+  
+  .mobile-button {
+    @apply py-4 px-6 text-base;
+  }
+}

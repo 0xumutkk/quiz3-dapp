@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#6366f1" />
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Test your Web3 knowledge on Aptos blockchain. Play trivia games, earn rewards, and climb the leaderboard!" />
+    <meta name="keywords" content="Aptos, blockchain, trivia, Web3, DeFi, NFT, zero-knowledge, quiz, rewards" />
+    <meta name="author" content="Quiz3" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://aptos-trivia.vercel.app/" />
+    <meta property="og:title" content="Quiz3 - Web3 Knowledge Arena" />
+    <meta property="og:description" content="Test your Web3 knowledge across 4 categories: Aptos, DeFi, NFT, and Zero-Knowledge. Earn APT rewards!" />
+    <meta property="og:image" content="/og-image.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://aptos-trivia.vercel.app/" />
+    <meta property="twitter:title" content="Quiz3 - Web3 Knowledge Arena" />
+    <meta property="twitter:description" content="Test your Web3 knowledge across 4 categories: Aptos, DeFi, NFT, and Zero-Knowledge. Earn APT rewards!" />
+    <meta property="twitter:image" content="/og-image.png" />
+
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Quiz3" />
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/apple-touch-icon-167x167.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    
+    <title>Quiz3 - Web3 Knowledge Arena</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
+    
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
