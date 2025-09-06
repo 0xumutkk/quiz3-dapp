@@ -29,7 +29,8 @@ Quiz3 is a cutting-edge Web3 trivia application that combines education with gam
 
 <div align="center">
 
-![Homepage - Category Selection]![wallet-connection](https://github.com/user-attachments/assets/c7bf1114-9606-4f0e-831f-b8bd5afb80e9)
+![Homepage - Category Selection]![wallet-connection]
+(https://github.com/user-attachments/assets/d4c5c950-0357-4469-bb69-d02d9f8c10c2)
 
 
 *Choose from 4 specialized Web3 categories: Aptos ⚡, DeFi 💰, NFT 🎨, and Zero-Knowledge 🔒*
