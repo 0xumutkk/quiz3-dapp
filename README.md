@@ -28,101 +28,29 @@ A comprehensive Web3 trivia dApp built on the Aptos blockchain, featuring mobile
 
 Quiz3 is a cutting-edge Web3 trivia application that combines education with gamification. Built on the Aptos blockchain, it offers an immersive learning experience for Web3 enthusiasts through interactive quizzes, real-time leaderboards, and APT token rewards.
 
-### 🏠 Homepage - Category Selection
+### 📱 Mobile-First Design
 
 <div align="center">
 
-![Homepage - Category Selection](./screenshots/homepage-categories.png)
+![Quiz3 Mobile App](./screenshots/main-app.png)
 
-*Choose from 4 specialized Web3 categories: Aptos ⚡, DeFi 💰, NFT 🎨, and Zero-Knowledge 🔒*
-
-</div>
-
-The homepage features a clean, mobile-first design with:
-- **Category Cards**: Each with unique color schemes and 10 carefully crafted questions
-- **Real-time Timer**: Weekly race countdown showing time remaining
-- **Wallet Integration**: Seamless connection with Aptos wallets
-- **Educational Resources**: Direct access to comprehensive learning materials
-
-### 🎯 Quiz Interface
-
-<div align="center">
-
-![Quiz Interface](./screenshots/quiz-interface.png)
-
-*Interactive quiz with category-specific theming and real-time feedback*
+*Quiz3 - Web3 Knowledge Arena: Mobile-first design with vibrant gradients and intuitive user experience*
 
 </div>
 
-The quiz experience includes:
-- **Dynamic Theming**: UI adapts to selected category colors
-- **Timer Display**: 15-second countdown with visual progress
-- **Educational Cards**: Learn from explanations after each question
-- **Progress Tracking**: Real-time score and streak monitoring
+**Key Features:**
+- **🏠 Homepage**: Clean category selection with real-time timer and wallet integration
+- **🎯 Quiz Interface**: Interactive questions with category-specific theming and 15-second countdown
+- **📚 Educational Resources**: Comprehensive learning guides covering all quiz topics
+- **🏆 Leaderboard**: Real-time rankings and weekly reward distribution
+- **💰 Reward System**: Secure APT token distribution based on performance
+- **🔐 Wallet Connection**: Multiple wallet options for seamless Web3 integration
 
-### 📚 Educational Resources
-
-<div align="center">
-
-![Educational Resources](./screenshots/educational-resources.png)
-
-*Comprehensive learning guides covering all quiz topics*
-
-</div>
-
-Educational features:
-- **Article Library**: In-depth guides for each category
-- **Reading Time**: Estimated time for each article
-- **Difficulty Levels**: Beginner to advanced content
-- **Comprehensive Coverage**: All quiz topics explained in detail
-
-### 🏆 Leaderboard & Rankings
-
-<div align="center">
-
-![Leaderboard](./screenshots/leaderboard.png)
-
-*Real-time rankings and weekly reward distribution*
-
-</div>
-
-Competitive features:
-- **Live Rankings**: See your position against other players
-- **Category Breakdown**: Individual scores for each topic
-- **Weekly Races**: Compete for APT token rewards
-- **Performance Analytics**: Detailed statistics and timing
-
-### 💰 Reward System
-
-<div align="center">
-
-![Reward System](./screenshots/reward-system.png)
-
-*Secure APT token distribution based on leaderboard performance*
-
-</div>
-
-Reward mechanics:
-- **Weekly Distribution**: APT tokens distributed every Monday
-- **Merkle Proofs**: Secure, gas-efficient reward claims
-- **Tiered Rewards**: Different amounts for top performers
-- **Transparent Tracking**: View all transactions on-chain
-
-### 🔐 Wallet Connection
-
-<div align="center">
-
-![Wallet Connection](./screenshots/wallet-connection.png)
-
-*Multiple wallet options for seamless Web3 integration*
-
-</div>
-
-Supported wallets:
-- **Google/Apple**: Social login integration
-- **Dev T Wallet**: Aptos-native wallet
-- **Nightly**: Popular Aptos wallet
-- **AptosConnect**: Universal wallet adapter
+**4 Specialized Categories:**
+- **⚡ Aptos**: High-performance blockchain technology
+- **💰 DeFi**: Decentralized finance protocols and strategies  
+- **🎨 NFT**: Digital ownership and non-fungible tokens
+- **🔒 Zero-Knowledge**: Privacy-preserving cryptographic proofs
 
 ---
 
@@ -178,20 +106,10 @@ Supported wallets:
 
 ## 📸 Screenshots
 
-The README includes comprehensive screenshots showcasing all major features of Quiz3. To add or update screenshots:
+The README features a comprehensive mobile screenshot showcasing the Quiz3 application's key features and user interface.
 
-1. **Take screenshots** using Chrome DevTools mobile view (400x800px)
-2. **Save to** `./screenshots/` directory with descriptive names
-3. **Update README** with correct file paths
-4. **See** [SCREENSHOTS.md](./SCREENSHOTS.md) for detailed guidelines
-
-### Current Screenshots
-- 🏠 **Homepage**: Category selection with wallet integration
-- 🎯 **Quiz Interface**: Interactive questions with dynamic theming  
-- 📚 **Educational Resources**: Comprehensive article library
-- 🏆 **Leaderboard**: Real-time rankings and performance analytics
-- 💰 **Reward System**: APT token distribution and claims
-- 🔐 **Wallet Connection**: Multiple wallet options and integration
+### Main Screenshot
+- 📱 **Mobile App Overview**: Complete application interface showing homepage and category selection
 
 ---
 
