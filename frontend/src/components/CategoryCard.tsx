@@ -2,7 +2,7 @@ import { CheckCircle, Play, Lock } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Category } from '@/types';
-import { getCategoryEmoji, cn } from '@/lib/utils';
+import { getCategoryEmoji, cn, getCategoryTheme } from '@/lib/utils';
 
 interface CategoryCardProps {
   category: Category;
@@ -23,14 +23,16 @@ export function CategoryCard({
   isLocked = false,
   onClick,
 }: CategoryCardProps) {
+  const theme = getCategoryTheme(category);
+  
   return (
     <Card 
       className={cn(
-        'category-card transition-all duration-300 cursor-pointer group',
+        'category-card transition-all duration-300 cursor-pointer group backdrop-blur-sm',
         `category-card ${category}`,
         {
           'opacity-50 cursor-not-allowed': isLocked,
-          'ring-2 ring-green-500/50': isCompleted,
+          [`ring-2 ring-${theme.accent}/50`]: isCompleted,
         }
       )}
       onClick={!isLocked ? onClick : undefined}
@@ -42,10 +44,10 @@ export function CategoryCard({
               {getCategoryEmoji(category)}
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white mb-1">
+              <h3 className="text-xl font-bold category-title mb-1">
                 {title}
               </h3>
-              <p className="text-sm text-slate-300 leading-relaxed">
+              <p className="text-sm category-description leading-relaxed">
                 {description}
               </p>
             </div>
@@ -61,12 +63,12 @@ export function CategoryCard({
         </div>
 
         <div className="flex items-center justify-between">
-          <div className="text-sm text-slate-400">
-            <span className="font-medium text-trivia-cyan">
+          <div className="text-sm category-questions">
+            <span className="font-medium category-questions-count">
               {questionsCount} Questions
             </span>
             {isCompleted && (
-              <span className="ml-2 text-green-400">✓ Completed</span>
+              <span className="ml-2 category-questions-count">✓ Completed</span>
             )}
           </div>
           
@@ -74,10 +76,8 @@ export function CategoryCard({
             size="sm" 
             disabled={isLocked}
             className={cn(
-              "transition-all duration-200 group-hover:scale-105",
-              isCompleted 
-                ? "bg-green-600 hover:bg-green-700 text-white" 
-                : "button-gradient"
+              "category-button transition-all duration-200 group-hover:scale-105",
+              isCompleted && "completed"
             )}
           >
             {isLocked ? (
@@ -91,11 +91,11 @@ export function CategoryCard({
 
         {/* Progress indicator */}
         {!isLocked && (
-          <div className="mt-4 h-1 bg-slate-700 rounded-full overflow-hidden">
+          <div className="mt-4 h-1 category-progress-bg rounded-full overflow-hidden">
             <div 
               className={cn(
-                "h-full rounded-full transition-all duration-500",
-                isCompleted ? "w-full bg-green-500" : "w-0 bg-gradient-primary"
+                "h-full rounded-full transition-all duration-500 category-progress-fill",
+                isCompleted ? "w-full completed" : "w-0"
               )}
             />
           </div>

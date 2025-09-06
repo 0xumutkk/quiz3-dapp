@@ -8,6 +8,7 @@ import { QuizPage } from '@/pages/QuizPage';
 import { ResultsPage } from '@/pages/ResultsPage';
 import { LeaderboardPage } from '@/pages/LeaderboardPage';
 import { ClaimPage } from '@/pages/ClaimPage';
+import { ArticlePage } from '@/pages/ArticlePage';
 
 import '@/globals.css';
 
@@ -39,6 +40,7 @@ function App() {
                 <Route path="/results" element={<ResultsPage />} />
                 <Route path="/leaderboard" element={<LeaderboardPage />} />
                 <Route path="/claim" element={<ClaimPage />} />
+                <Route path="/article" element={<ArticlePage />} />
                 <Route path="*" element={<div className="text-center py-20">
                   <h1 className="text-4xl font-bold gradient-text mb-4">404</h1>
                   <p className="text-slate-400">Page not found</p>

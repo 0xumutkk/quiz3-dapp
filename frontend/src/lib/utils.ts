@@ -68,6 +68,121 @@ export function getCategoryColor(category: string): string {
   }
 }
 
+// Category-specific color and styling utilities
+export interface CategoryTheme {
+  primary: string;
+  secondary: string;
+  accent: string;
+  light: string;
+  dark: string;
+  bg: string;
+  surface: string;
+  gradient: string;
+  bgGradient: string;
+  textGradient: string;
+  border: string;
+  shadow: string;
+}
+
+export function getCategoryTheme(category: string): CategoryTheme {
+  switch (category.toLowerCase()) {
+    case 'aptos':
+      return {
+        primary: 'aptos-primary',
+        secondary: 'aptos-secondary',
+        accent: 'aptos-accent',
+        light: 'aptos-light',
+        dark: 'aptos-dark',
+        bg: 'aptos-bg',
+        surface: 'aptos-surface',
+        gradient: 'aptos-gradient',
+        bgGradient: 'aptos-bg-gradient',
+        textGradient: 'from-aptos-primary to-aptos-secondary',
+        border: 'border-aptos-primary/30',
+        shadow: 'shadow-aptos-primary/20',
+      };
+    case 'defi':
+      return {
+        primary: 'defi-primary',
+        secondary: 'defi-secondary',
+        accent: 'defi-accent',
+        light: 'defi-light',
+        dark: 'defi-dark',
+        bg: 'defi-bg',
+        surface: 'defi-surface',
+        gradient: 'defi-gradient',
+        bgGradient: 'defi-bg-gradient',
+        textGradient: 'from-defi-primary to-defi-secondary',
+        border: 'border-defi-primary/30',
+        shadow: 'shadow-defi-primary/20',
+      };
+    case 'nft':
+      return {
+        primary: 'nft-primary',
+        secondary: 'nft-secondary',
+        accent: 'nft-accent',
+        light: 'nft-light',
+        dark: 'nft-dark',
+        bg: 'nft-bg',
+        surface: 'nft-surface',
+        gradient: 'nft-gradient',
+        bgGradient: 'nft-bg-gradient',
+        textGradient: 'from-nft-primary to-nft-secondary',
+        border: 'border-nft-primary/30',
+        shadow: 'shadow-nft-primary/20',
+      };
+    case 'zk':
+      return {
+        primary: 'zk-primary',
+        secondary: 'zk-secondary',
+        accent: 'zk-accent',
+        light: 'zk-light',
+        dark: 'zk-dark',
+        bg: 'zk-bg',
+        surface: 'zk-surface',
+        gradient: 'zk-gradient',
+        bgGradient: 'zk-bg-gradient',
+        textGradient: 'from-zk-primary to-zk-secondary',
+        border: 'border-zk-primary/30',
+        shadow: 'shadow-zk-primary/20',
+      };
+    default:
+      return {
+        primary: 'slate-600',
+        secondary: 'slate-500',
+        accent: 'slate-400',
+        light: 'slate-300',
+        dark: 'slate-800',
+        bg: 'slate-900',
+        surface: 'slate-800',
+        gradient: 'gradient-primary',
+        bgGradient: 'hero-gradient',
+        textGradient: 'from-slate-400 to-slate-300',
+        border: 'border-slate-600/30',
+        shadow: 'shadow-slate-600/20',
+      };
+  }
+}
+
+export function getCategoryClasses(category: string, element: 'background' | 'card' | 'button' | 'text' | 'border'): string {
+  const theme = getCategoryTheme(category);
+  
+  switch (element) {
+    case 'background':
+      return `bg-${theme.bg} bg-${theme.bgGradient}`;
+    case 'card':
+      return `bg-${theme.surface}/80 border-${theme.border} shadow-${theme.shadow}`;
+    case 'button':
+      return `bg-${theme.gradient} hover:bg-${theme.primary} text-white border-${theme.border}`;
+    case 'text':
+      return `text-${theme.primary} bg-gradient-to-r ${theme.textGradient} bg-clip-text text-transparent`;
+    case 'border':
+      return `border-${theme.border}`;
+    default:
+      return '';
+  }
+}
+
 export function getCategoryEmoji(category: string): string {
   switch (category.toLowerCase()) {
     case 'aptos': return '⚡'

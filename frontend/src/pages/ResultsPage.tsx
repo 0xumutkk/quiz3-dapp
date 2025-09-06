@@ -1,9 +1,10 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Trophy, Target, Clock, Zap, Home, Share2 } from 'lucide-react';
+import { Trophy, Target, Clock, Zap, Home, Share2, BookOpen, ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Category, QuizResponse } from '@/types';
-import { getCategoryEmoji } from '@/lib/utils';
+import { getCategoryEmoji, getCategoryTheme } from '@/lib/utils';
+import { getEducationalArticle, shouldRecommendArticle } from '@/data/articles';
 
 interface LocationState {
   category: Category;
@@ -29,6 +30,11 @@ export function ResultsPage() {
 
   // Estimated rank (placeholder)
   const estimatedRank = Math.floor(Math.random() * 100) + 1;
+
+  // Check if user should be recommended an article
+  const shouldRecommend = shouldRecommendArticle(correctAnswers, responses.length);
+  const article = shouldRecommend ? getEducationalArticle(category) : null;
+  const theme = getCategoryTheme(category);
 
   const handleShare = async () => {
     const shareData = {
@@ -168,6 +174,49 @@ export function ResultsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Educational Article Recommendation */}
+      {shouldRecommend && article && (
+        <Card className={`bg-gradient-to-r from-${theme.bg}/30 to-${theme.surface}/30 border-${theme.border} shadow-${theme.shadow} backdrop-blur-sm animate-slide-up`}>
+          <CardHeader>
+            <CardTitle className={`flex items-center gap-3 text-${theme.primary}`}>
+              <BookOpen className="h-6 w-6" />
+              📚 Improve Your Knowledge
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-start gap-4">
+              <div className={`h-12 w-12 rounded-xl bg-${theme.primary}/20 flex items-center justify-center flex-shrink-0`}>
+                <BookOpen className={`h-6 w-6 text-${theme.primary}`} />
+              </div>
+              <div className="flex-1">
+                <h3 className={`text-xl font-bold text-${theme.light} mb-2`}>
+                  {article.title}
+                </h3>
+                <p className={`text-${theme.light}/90 mb-3`}>
+                  {article.subtitle}
+                </p>
+                <div className="flex items-center gap-4 text-sm text-slate-400 mb-4">
+                  <span>📖 {article.readingTime}</span>
+                  <span>🎯 {article.difficulty}</span>
+                  <span>✅ Covers all quiz answers</span>
+                </div>
+                <p className={`text-${theme.light}/80 mb-4`}>
+                  You got {correctAnswers} out of {responses.length} questions correct. This comprehensive article covers all the topics from the quiz and will help you understand the concepts better.
+                </p>
+                <Button 
+                  onClick={() => navigate('/article', { state: { article, category } })}
+                  className={`bg-${theme.gradient} hover:bg-${theme.primary} text-white border-${theme.border} w-full`}
+                >
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  Read Article
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center">

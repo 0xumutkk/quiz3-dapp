@@ -92,9 +92,9 @@
   }
   
   .category-card {
-    @apply relative overflow-hidden rounded-2xl p-6 cursor-pointer;
+    @apply relative overflow-hidden rounded-2xl cursor-pointer;
     @apply transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl;
-    @apply border border-slate-700/50;
+    @apply backdrop-blur-sm;
   }
   
   .category-card::before {
@@ -106,24 +106,291 @@
     @apply opacity-20;
   }
   
+  /* Category-specific card styles */
   .category-card.aptos {
-    @apply bg-gradient-to-br from-trivia-purple/20 to-trivia-light-purple/20;
-    @apply hover:from-trivia-purple/30 hover:to-trivia-light-purple/30;
+    @apply bg-aptos-surface/80 border-aptos-primary/30 shadow-lg;
   }
   
   .category-card.defi {
-    @apply bg-gradient-to-br from-trivia-blue/20 to-trivia-light-blue/20;
-    @apply hover:from-trivia-blue/30 hover:to-trivia-light-blue/30;
+    @apply bg-defi-surface/80 border-defi-primary/30 shadow-lg;
   }
   
   .category-card.nft {
-    @apply bg-gradient-to-br from-trivia-cyan/20 to-trivia-teal/20;
-    @apply hover:from-trivia-cyan/30 hover:to-trivia-teal/30;
+    @apply bg-nft-surface/80 border-nft-primary/30 shadow-lg;
   }
   
   .category-card.zk {
-    @apply bg-gradient-to-br from-trivia-pink/20 to-trivia-orange/20;
-    @apply hover:from-trivia-pink/30 hover:to-trivia-orange/30;
+    @apply bg-zk-surface/80 border-zk-primary/30 shadow-lg;
+  }
+  
+  /* Category-specific hover effects */
+  .category-card:hover {
+    @apply shadow-2xl;
+  }
+  
+  .category-card.aptos:hover {
+    @apply shadow-2xl shadow-aptos-primary/20;
+  }
+  
+  .category-card.defi:hover {
+    @apply shadow-2xl shadow-defi-primary/20;
+  }
+  
+  .category-card.nft:hover {
+    @apply shadow-2xl shadow-nft-primary/20;
+  }
+  
+  .category-card.zk:hover {
+    @apply shadow-2xl shadow-zk-primary/20;
+  }
+  
+  /* Category-specific text colors */
+  .category-card.aptos .category-title {
+    @apply text-aptos-light;
+  }
+  
+  .category-card.aptos .category-description {
+    @apply text-aptos-light/80;
+  }
+  
+  .category-card.aptos .category-questions {
+    @apply text-aptos-light/80;
+  }
+  
+  .category-card.aptos .category-questions-count {
+    @apply text-aptos-accent;
+  }
+  
+  .category-card.defi .category-title {
+    @apply text-defi-light;
+  }
+  
+  .category-card.defi .category-description {
+    @apply text-defi-light/80;
+  }
+  
+  .category-card.defi .category-questions {
+    @apply text-defi-light/80;
+  }
+  
+  .category-card.defi .category-questions-count {
+    @apply text-defi-accent;
+  }
+  
+  .category-card.nft .category-title {
+    @apply text-nft-light;
+  }
+  
+  .category-card.nft .category-description {
+    @apply text-nft-light/80;
+  }
+  
+  .category-card.nft .category-questions {
+    @apply text-nft-light/80;
+  }
+  
+  .category-card.nft .category-questions-count {
+    @apply text-nft-accent;
+  }
+  
+  .category-card.zk .category-title {
+    @apply text-zk-light;
+  }
+  
+  .category-card.zk .category-description {
+    @apply text-zk-light/80;
+  }
+  
+  .category-card.zk .category-questions {
+    @apply text-zk-light/80;
+  }
+  
+  .category-card.zk .category-questions-count {
+    @apply text-zk-accent;
+  }
+  
+  /* Category-specific button styles */
+  .category-card.aptos .category-button {
+    @apply bg-gradient-to-r from-aptos-primary to-aptos-secondary hover:bg-aptos-primary text-white border-aptos-primary/30;
+  }
+  
+  .category-card.aptos .category-button.completed {
+    @apply bg-aptos-accent hover:bg-aptos-primary text-white;
+  }
+  
+  .category-card.defi .category-button {
+    @apply bg-gradient-to-r from-defi-primary to-defi-secondary hover:bg-defi-primary text-white border-defi-primary/30;
+  }
+  
+  .category-card.defi .category-button.completed {
+    @apply bg-defi-accent hover:bg-defi-primary text-white;
+  }
+  
+  .category-card.nft .category-button {
+    @apply bg-gradient-to-r from-nft-primary to-nft-secondary hover:bg-nft-primary text-white border-nft-primary/30;
+  }
+  
+  .category-card.nft .category-button.completed {
+    @apply bg-nft-accent hover:bg-nft-primary text-white;
+  }
+  
+  .category-card.zk .category-button {
+    @apply bg-gradient-to-r from-zk-primary to-zk-secondary hover:bg-zk-primary text-white border-zk-primary/30;
+  }
+  
+  .category-card.zk .category-button.completed {
+    @apply bg-zk-accent hover:bg-zk-primary text-white;
+  }
+  
+  /* Category-specific progress bar styles */
+  .category-card.aptos .category-progress-bg {
+    @apply bg-aptos-dark/30;
+  }
+  
+  .category-card.aptos .category-progress-fill {
+    @apply bg-gradient-to-r from-aptos-primary to-aptos-secondary;
+  }
+  
+  .category-card.aptos .category-progress-fill.completed {
+    @apply bg-aptos-accent;
+  }
+  
+  .category-card.defi .category-progress-bg {
+    @apply bg-defi-dark/30;
+  }
+  
+  .category-card.defi .category-progress-fill {
+    @apply bg-gradient-to-r from-defi-primary to-defi-secondary;
+  }
+  
+  .category-card.defi .category-progress-fill.completed {
+    @apply bg-defi-accent;
+  }
+  
+  .category-card.nft .category-progress-bg {
+    @apply bg-nft-dark/30;
+  }
+  
+  .category-card.nft .category-progress-fill {
+    @apply bg-gradient-to-r from-nft-primary to-nft-secondary;
+  }
+  
+  .category-card.nft .category-progress-fill.completed {
+    @apply bg-nft-accent;
+  }
+  
+  .category-card.zk .category-progress-bg {
+    @apply bg-zk-dark/30;
+  }
+  
+  .category-card.zk .category-progress-fill {
+    @apply bg-gradient-to-r from-zk-primary to-zk-secondary;
+  }
+  
+  .category-card.zk .category-progress-fill.completed {
+    @apply bg-zk-accent;
+  }
+
+  /* Category-specific quiz backgrounds */
+  .quiz-bg-aptos {
+    @apply bg-aptos-bg-gradient;
+  }
+  
+  .quiz-bg-defi {
+    @apply bg-defi-bg-gradient;
+  }
+  
+  .quiz-bg-nft {
+    @apply bg-nft-bg-gradient;
+  }
+  
+  .quiz-bg-zk {
+    @apply bg-zk-bg-gradient;
+  }
+
+  /* Category-specific card styles */
+  .quiz-card-aptos {
+    @apply bg-aptos-surface/80 border-aptos-primary/30 shadow-aptos-primary/20;
+  }
+  
+  .quiz-card-defi {
+    @apply bg-defi-surface/80 border-defi-primary/30 shadow-defi-primary/20;
+  }
+  
+  .quiz-card-nft {
+    @apply bg-nft-surface/80 border-nft-primary/30 shadow-nft-primary/20;
+  }
+  
+  .quiz-card-zk {
+    @apply bg-zk-surface/80 border-zk-primary/30 shadow-zk-primary/20;
+  }
+
+  /* Category-specific button styles */
+  .quiz-button-aptos {
+    @apply bg-aptos-gradient hover:bg-aptos-primary text-white border-aptos-primary/30;
+  }
+  
+  .quiz-button-defi {
+    @apply bg-defi-gradient hover:bg-defi-primary text-white border-defi-primary/30;
+  }
+  
+  .quiz-button-nft {
+    @apply bg-nft-gradient hover:bg-nft-primary text-white border-nft-primary/30;
+  }
+  
+  .quiz-button-zk {
+    @apply bg-zk-gradient hover:bg-zk-primary text-white border-zk-primary/30;
+  }
+
+  /* Category-specific text styles */
+  .quiz-text-aptos {
+    @apply text-aptos-primary bg-gradient-to-r from-aptos-primary to-aptos-secondary bg-clip-text text-transparent;
+  }
+  
+  .quiz-text-defi {
+    @apply text-defi-primary bg-gradient-to-r from-defi-primary to-defi-secondary bg-clip-text text-transparent;
+  }
+  
+  .quiz-text-nft {
+    @apply text-nft-primary bg-gradient-to-r from-nft-primary to-nft-secondary bg-clip-text text-transparent;
+  }
+  
+  .quiz-text-zk {
+    @apply text-zk-primary bg-gradient-to-r from-zk-primary to-zk-secondary bg-clip-text text-transparent;
+  }
+
+  /* Category-specific progress bars */
+  .progress-aptos {
+    @apply bg-aptos-gradient;
+  }
+  
+  .progress-defi {
+    @apply bg-defi-gradient;
+  }
+  
+  .progress-nft {
+    @apply bg-nft-gradient;
+  }
+  
+  .progress-zk {
+    @apply bg-zk-gradient;
+  }
+
+  /* Category-specific glow effects */
+  .glow-aptos {
+    @apply shadow-lg shadow-aptos-primary/30;
+  }
+  
+  .glow-defi {
+    @apply shadow-lg shadow-defi-primary/30;
+  }
+  
+  .glow-nft {
+    @apply shadow-lg shadow-nft-primary/30;
+  }
+  
+  .glow-zk {
+    @apply shadow-lg shadow-zk-primary/30;
   }
 }
 
@@ -169,6 +436,120 @@
 
 .pulse-button {
   animation: pulse-button 2s ease-in-out infinite;
+}
+
+/* Category-specific pulse animations */
+@keyframes pulse-aptos {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(139, 92, 246, 0.6);
+  }
+}
+
+@keyframes pulse-defi {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(16, 185, 129, 0.6);
+  }
+}
+
+@keyframes pulse-nft {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(236, 72, 153, 0.6);
+  }
+}
+
+@keyframes pulse-zk {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(249, 115, 22, 0.6);
+  }
+}
+
+.pulse-aptos {
+  animation: pulse-aptos 2s ease-in-out infinite;
+}
+
+.pulse-defi {
+  animation: pulse-defi 2s ease-in-out infinite;
+}
+
+.pulse-nft {
+  animation: pulse-nft 2s ease-in-out infinite;
+}
+
+.pulse-zk {
+  animation: pulse-zk 2s ease-in-out infinite;
+}
+
+/* Category-specific shimmer effects */
+@keyframes shimmer-aptos {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes shimmer-defi {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes shimmer-nft {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes shimmer-zk {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-aptos {
+  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer-aptos 2s ease-in-out infinite;
+}
+
+.shimmer-defi {
+  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer-defi 2s ease-in-out infinite;
+}
+
+.shimmer-nft {
+  background: linear-gradient(90deg, transparent, rgba(236, 72, 153, 0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer-nft 2s ease-in-out infinite;
+}
+
+.shimmer-zk {
+  background: linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer-zk 2s ease-in-out infinite;
 }
 
 /* Mobile-first responsive design helpers */

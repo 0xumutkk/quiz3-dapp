@@ -12,28 +12,28 @@ const categories = [
     title: 'Aptos',
     description: 'Learn about the high-performance blockchain built for billions',
     icon: Zap,
-    questionsCount: 5,
+    questionsCount: 10,
   },
   {
     category: 'defi' as Category,
     title: 'DeFi',
     description: 'Master decentralized finance protocols and strategies',
     icon: Coins,
-    questionsCount: 5,
+    questionsCount: 10,
   },
   {
     category: 'nft' as Category,
     title: 'NFT',
     description: 'Explore digital ownership and non-fungible tokens',
     icon: Palette,
-    questionsCount: 5,
+    questionsCount: 10,
   },
   {
     category: 'zk' as Category,
     title: 'Zero-Knowledge',
     description: 'Discover privacy-preserving cryptographic proofs',
     icon: Shield,
-    questionsCount: 5,
+    questionsCount: 10,
   },
 ];
 

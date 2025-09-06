@@ -11,7 +11,7 @@ import { Progress } from '@/components/ui/progress';
 
 import { Category, Question, QuizResponse } from '@/types';
 import { getRandomQuestions } from '@/data/questions';
-import { calculateScore, getCategoryEmoji } from '@/lib/utils';
+import { calculateScore, getCategoryEmoji, getCategoryTheme } from '@/lib/utils';
 
 const QUESTION_TIME_LIMIT = 15; // seconds
 
@@ -44,7 +44,7 @@ export function QuizPage() {
     }
 
     // Load questions for the category
-    const categoryQuestions = getRandomQuestions(category as Category, 5);
+    const categoryQuestions = getRandomQuestions(category as Category, 10);
     setQuestions(categoryQuestions);
   }, [connected, category, navigate]);
 
@@ -154,46 +154,59 @@ export function QuizPage() {
 
   const currentQuestion = questions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+  const theme = getCategoryTheme(category!);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
+    <div className={`min-h-screen bg-${theme.bgGradient} transition-all duration-500`}>
+      <div className="max-w-6xl mx-auto space-y-8 p-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <Button variant="ghost" onClick={handleBack} className="flex items-center gap-2">
+        <Button 
+          variant="ghost" 
+          onClick={handleBack} 
+          className={`flex items-center gap-2 text-${theme.light} hover:bg-${theme.surface}/50 hover:text-white transition-colors`}
+        >
           <ArrowLeft className="h-4 w-4" />
           Back to Categories
         </Button>
 
         <div className="flex items-center gap-4">
           {/* Category indicator */}
-          <div className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 rounded-xl border border-slate-700/50">
+          <div className={`flex items-center gap-2 px-4 py-2 bg-${theme.surface}/80 rounded-xl border-${theme.border} shadow-${theme.shadow} backdrop-blur-sm`}>
             <span className="text-xl">{getCategoryEmoji(category!)}</span>
-            <span className="font-semibold text-white capitalize">{category}</span>
+            <span className={`font-semibold text-${theme.light} capitalize`}>{category}</span>
           </div>
 
           {/* Streak indicator */}
           {streak > 0 && (
-            <div className="flex items-center gap-2 px-3 py-2 bg-orange-500/20 border border-orange-500/30 rounded-xl">
-              <Flame className="h-4 w-4 text-orange-400" />
-              <span className="text-orange-400 font-bold">{streak}x</span>
+            <div className={`flex items-center gap-2 px-3 py-2 bg-${theme.accent}/20 border border-${theme.accent}/30 rounded-xl backdrop-blur-sm`}>
+              <Flame className={`h-4 w-4 text-${theme.accent}`} />
+              <span className={`text-${theme.accent} font-bold`}>{streak}x</span>
             </div>
           )}
         </div>
       </div>
 
       {/* Progress and Score */}
-      <Card>
+      <Card className={`bg-${theme.surface}/80 border-${theme.border} shadow-${theme.shadow} backdrop-blur-sm`}>
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
-            <div className="text-sm text-slate-400">
-              Question <span className="font-bold text-white">{currentQuestionIndex + 1}</span> of{' '}
-              <span className="font-bold text-white">{questions.length}</span>
+            <div className={`text-sm text-${theme.light}/80`}>
+              Question <span className={`font-bold text-${theme.light}`}>{currentQuestionIndex + 1}</span> of{' '}
+              <span className={`font-bold text-${theme.light}`}>{questions.length}</span>
             </div>
-            <div className="text-sm text-slate-400">
-              Score: <span className="font-bold text-trivia-cyan">{totalScore.toLocaleString()}</span>
+            <div className={`text-sm text-${theme.light}/80`}>
+              Score: <span className={`font-bold text-${theme.accent}`}>{totalScore.toLocaleString()}</span>
             </div>
           </div>
-          <Progress value={progress} className="h-2" />
+          <Progress 
+            value={progress} 
+            className={`h-2 bg-${theme.dark}/30`}
+            style={{
+              '--progress-background': `linear-gradient(90deg, var(--tw-gradient-stops))`,
+              '--progress-foreground': `var(--tw-gradient-stops)`,
+            } as React.CSSProperties}
+          />
         </CardContent>
       </Card>
 
@@ -203,6 +216,7 @@ export function QuizPage() {
         maxTime={QUESTION_TIME_LIMIT}
         onTimeUp={handleTimeUp}
         isPaused={isPaused}
+        category={category!}
       />
 
       {/* Question */}
@@ -212,6 +226,7 @@ export function QuizPage() {
         selectedAnswer={selectedAnswer}
         showResult={showResult}
         disabled={isPaused}
+        category={category!}
       />
 
       {/* Debug info (remove in production) */}
@@ -229,6 +244,7 @@ export function QuizPage() {
           </CardContent>
         </Card>
       )}
+      </div>
     </div>
   );
 }

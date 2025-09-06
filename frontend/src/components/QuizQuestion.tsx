@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, BookOpen, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Question } from '@/types';
-import { shuffleArray, cn } from '@/lib/utils';
+import { Question, Category } from '@/types';
+import { shuffleArray, cn, getCategoryTheme } from '@/lib/utils';
 import { getEducationalContent } from '@/data/questions';
 
 interface QuizQuestionProps {
@@ -12,6 +12,7 @@ interface QuizQuestionProps {
   selectedAnswer?: number;
   showResult: boolean;
   disabled?: boolean;
+  category: Category;
 }
 
 export function QuizQuestion({ 
@@ -19,10 +20,12 @@ export function QuizQuestion({
   onAnswer, 
   selectedAnswer, 
   showResult, 
-  disabled = false 
+  disabled = false,
+  category
 }: QuizQuestionProps) {
   const [shuffledChoices, setShuffledChoices] = useState<Array<{text: string, originalIndex: number}>>([]);
   const [canProceed, setCanProceed] = useState(false);
+  const theme = getCategoryTheme(category);
 
   // Shuffle choices on question change while preserving original indices
   useEffect(() => {
@@ -84,20 +87,20 @@ export function QuizQuestion({
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
       {/* Question */}
-      <Card className="card-glow">
+      <Card className={`card-glow bg-${theme.surface}/80 border-${theme.border} shadow-${theme.shadow} backdrop-blur-sm`}>
         <CardContent className="p-8">
           <div className="flex items-start gap-4 mb-6">
-            <div className="h-8 w-8 rounded-full bg-gradient-primary flex items-center justify-center text-white font-bold text-sm">
+            <div className={`h-8 w-8 rounded-full bg-${theme.gradient} flex items-center justify-center text-white font-bold text-sm`}>
               ?
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white leading-relaxed flex-1 quiz-question-mobile-responsive">
+            <h2 className={`text-xl sm:text-2xl font-bold text-${theme.light} leading-relaxed flex-1 quiz-question-mobile-responsive`}>
               {question.text}
             </h2>
           </div>
 
           {/* Difficulty indicator */}
           <div className="flex items-center gap-2 mb-6">
-            <span className="text-xs text-slate-400 uppercase tracking-wider">
+            <span className={`text-xs text-${theme.light}/80 uppercase tracking-wider`}>
               Difficulty:
             </span>
             <span className={cn(
@@ -132,7 +135,7 @@ export function QuizQuestion({
               >
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-lg bg-slate-700 flex items-center justify-center text-slate-300 font-semibold text-sm">
+                    <div className={`h-8 w-8 rounded-lg bg-${theme.dark}/50 flex items-center justify-center text-${theme.light} font-semibold text-sm`}>
                       {String.fromCharCode(65 + index)}
                     </div>
                     <span className="text-left">{choice.text}</span>
@@ -147,21 +150,21 @@ export function QuizQuestion({
 
       {/* Educational Card - Shows when answer is wrong */}
       {isWrongAnswer && educationalContent && (
-        <Card className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border-blue-500/30 animate-slide-up">
+        <Card className={`bg-gradient-to-r from-${theme.bg}/30 to-${theme.surface}/30 border-${theme.border} animate-slide-up backdrop-blur-sm`}>
           <CardContent className="p-6">
             <div className="flex items-start gap-4">
-              <div className="h-10 w-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
-                <BookOpen className="h-5 w-5 text-blue-400" />
+              <div className={`h-10 w-10 rounded-xl bg-${theme.primary}/20 flex items-center justify-center`}>
+                <BookOpen className={`h-5 w-5 text-${theme.primary}`} />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-blue-300 mb-2 flex items-center gap-2">
+                <h3 className={`font-semibold text-${theme.primary} mb-2 flex items-center gap-2`}>
                   Learn More
-                  <div className="h-1 w-8 bg-gradient-primary rounded-full"></div>
+                  <div className={`h-1 w-8 bg-${theme.gradient} rounded-full`}></div>
                 </h3>
-                <p className="text-slate-300 mb-3 leading-relaxed">
+                <p className={`text-${theme.light}/90 mb-3 leading-relaxed`}>
                   <strong className="text-green-400">Correct Answer:</strong> {question.choices[question.answer_idx]}
                 </p>
-                <p className="text-slate-300 leading-relaxed mb-4">
+                <p className={`text-${theme.light}/90 leading-relaxed mb-4`}>
                   {question.explanation || educationalContent.explanation}
                 </p>
                 {educationalContent.relatedTopics && (
@@ -169,7 +172,7 @@ export function QuizQuestion({
                     {educationalContent.relatedTopics.map((topic, index) => (
                       <span 
                         key={index}
-                        className="text-xs px-2 py-1 bg-blue-500/20 text-blue-300 rounded-lg"
+                        className={`text-xs px-2 py-1 bg-${theme.primary}/20 text-${theme.primary} rounded-lg`}
                       >
                         {topic}
                       </span>
@@ -190,7 +193,7 @@ export function QuizQuestion({
             disabled={!canProceed}
             className={cn(
               "min-w-32 transition-all duration-300",
-              canProceed ? "button-gradient" : "opacity-50 cursor-not-allowed"
+              canProceed ? `bg-${theme.gradient} hover:bg-${theme.primary} text-white border-${theme.border}` : "opacity-50 cursor-not-allowed"
             )}
           >
             Next Question

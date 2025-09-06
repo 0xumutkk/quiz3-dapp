@@ -47,6 +47,51 @@ export const DUMMY_QUESTIONS: Record<Category, Question[]> = {
       answer_idx: 0,
       difficulty: 'medium',
       explanation: 'Block-STM (Block-based Software Transactional Memory) enables parallel transaction execution by detecting conflicts and ensuring correctness.'
+    },
+    {
+      id: 'aptos_6',
+      category: 'aptos',
+      text: 'What year was Aptos blockchain officially launched?',
+      choices: ['2020', '2021', '2022', '2023'],
+      answer_idx: 2,
+      difficulty: 'easy',
+      explanation: 'Aptos was officially launched in October 2022, marking a significant milestone in blockchain technology with its focus on scalability and safety.'
+    },
+    {
+      id: 'aptos_7',
+      category: 'aptos',
+      text: 'What is the main advantage of Aptos over traditional blockchains?',
+      choices: ['Lower fees', 'Higher throughput', 'Better privacy', 'More decentralization'],
+      answer_idx: 1,
+      difficulty: 'medium',
+      explanation: 'Aptos is designed for high throughput, capable of processing over 160,000 transactions per second through its parallel execution engine.'
+    },
+    {
+      id: 'aptos_8',
+      category: 'aptos',
+      text: 'What does BFT stand for in AptosBFT?',
+      choices: ['Blockchain Fault Tolerance', 'Byzantine Fault Tolerance', 'Best Fault Tolerance', 'Block Fault Tolerance'],
+      answer_idx: 1,
+      difficulty: 'medium',
+      explanation: 'BFT stands for Byzantine Fault Tolerance, a consensus mechanism that can handle up to one-third of malicious nodes while maintaining network security.'
+    },
+    {
+      id: 'aptos_9',
+      category: 'aptos',
+      text: 'What is the name of Aptos testnet?',
+      choices: ['Devnet', 'Testnet', 'AIT-3', 'All of the above'],
+      answer_idx: 3,
+      difficulty: 'hard',
+      explanation: 'Aptos has used multiple testnet names including Devnet, Testnet, and AIT-3 (Aptos Incentivized Testnet 3) for different phases of development.'
+    },
+    {
+      id: 'aptos_10',
+      category: 'aptos',
+      text: 'What is the minimum stake required to become an Aptos validator?',
+      choices: ['1 APT', '1,000 APT', '1,000,000 APT', 'No minimum stake'],
+      answer_idx: 2,
+      difficulty: 'hard',
+      explanation: 'Aptos requires a minimum stake of 1,000,000 APT to become a validator, ensuring network security and validator commitment.'
     }
   ],
   defi: [
@@ -94,6 +139,51 @@ export const DUMMY_QUESTIONS: Record<Category, Question[]> = {
       answer_idx: 1,
       difficulty: 'medium',
       explanation: 'Yield farming involves providing liquidity to DeFi protocols in exchange for token rewards, fees, or other incentives.'
+    },
+    {
+      id: 'defi_6',
+      category: 'defi',
+      text: 'What is the purpose of a decentralized autonomous organization (DAO) in DeFi?',
+      choices: ['Automated trading', 'Community governance', 'Price discovery', 'Liquidity provision'],
+      answer_idx: 1,
+      difficulty: 'medium',
+      explanation: 'DAOs enable decentralized governance where token holders vote on protocol changes, treasury management, and other important decisions.'
+    },
+    {
+      id: 'defi_7',
+      category: 'defi',
+      text: 'What is a flash loan in DeFi?',
+      choices: ['A long-term loan', 'A loan that must be repaid in the same transaction', 'A loan with no interest', 'A loan backed by real estate'],
+      answer_idx: 1,
+      difficulty: 'hard',
+      explanation: 'Flash loans are uncollateralized loans that must be borrowed and repaid within a single transaction, enabling complex arbitrage strategies.'
+    },
+    {
+      id: 'defi_8',
+      category: 'defi',
+      text: 'What does APY stand for in DeFi?',
+      choices: ['Annual Percentage Yield', 'Automated Protocol Yield', 'Average Protocol Yield', 'Annual Protocol Yield'],
+      answer_idx: 0,
+      difficulty: 'easy',
+      explanation: 'APY (Annual Percentage Yield) represents the real rate of return earned on an investment, taking into account compound interest.'
+    },
+    {
+      id: 'defi_9',
+      category: 'defi',
+      text: 'What is the main risk of providing liquidity to a DeFi protocol?',
+      choices: ['Smart contract bugs', 'Impermanent loss', 'Regulatory changes', 'All of the above'],
+      answer_idx: 3,
+      difficulty: 'medium',
+      explanation: 'DeFi liquidity providers face multiple risks including smart contract vulnerabilities, impermanent loss, and regulatory uncertainty.'
+    },
+    {
+      id: 'defi_10',
+      category: 'defi',
+      text: 'What is the purpose of a governance token in DeFi?',
+      choices: ['To pay transaction fees', 'To vote on protocol changes', 'To provide liquidity', 'To mine new tokens'],
+      answer_idx: 1,
+      difficulty: 'easy',
+      explanation: 'Governance tokens give holders the right to vote on protocol upgrades, parameter changes, and treasury management decisions.'
     }
   ],
   nft: [
@@ -141,6 +231,51 @@ export const DUMMY_QUESTIONS: Record<Category, Question[]> = {
       answer_idx: 2,
       difficulty: 'easy',
       explanation: 'NFT royalties are automatic payments to original creators each time their NFT is resold on secondary markets.'
+    },
+    {
+      id: 'nft_6',
+      category: 'nft',
+      text: 'What is the difference between ERC-721 and ERC-1155 NFT standards?',
+      choices: ['No difference', 'ERC-721 is for single NFTs, ERC-1155 is for multiple', 'ERC-1155 is for single NFTs, ERC-721 is for multiple', 'Different blockchains'],
+      answer_idx: 1,
+      difficulty: 'medium',
+      explanation: 'ERC-721 is designed for unique, single NFTs while ERC-1155 supports multiple token types in a single contract, including both fungible and non-fungible tokens.'
+    },
+    {
+      id: 'nft_7',
+      category: 'nft',
+      text: 'What is the purpose of NFT metadata?',
+      choices: ['To store transaction history', 'To describe the NFT properties and content', 'To track ownership', 'To calculate royalties'],
+      answer_idx: 1,
+      difficulty: 'easy',
+      explanation: 'NFT metadata contains information about the NFT such as name, description, image URL, and other attributes that define what the NFT represents.'
+    },
+    {
+      id: 'nft_8',
+      category: 'nft',
+      text: 'What is a common use case for gaming NFTs?',
+      choices: ['Profile pictures', 'In-game items and characters', 'Digital art', 'Real estate'],
+      answer_idx: 1,
+      difficulty: 'medium',
+      explanation: 'Gaming NFTs often represent in-game items, characters, weapons, or land that players can own, trade, and use across different games or platforms.'
+    },
+    {
+      id: 'nft_9',
+      category: 'nft',
+      text: 'What is the main advantage of storing NFT images on IPFS?',
+      choices: ['Lower costs', 'Decentralized and permanent storage', 'Faster loading', 'Better quality'],
+      answer_idx: 1,
+      difficulty: 'medium',
+      explanation: 'IPFS provides decentralized, content-addressed storage that ensures NFT images remain accessible even if the original server goes offline.'
+    },
+    {
+      id: 'nft_10',
+      category: 'nft',
+      text: 'What is the purpose of NFT marketplaces?',
+      choices: ['To create NFTs', 'To buy, sell, and trade NFTs', 'To store NFTs', 'To validate NFTs'],
+      answer_idx: 1,
+      difficulty: 'easy',
+      explanation: 'NFT marketplaces are platforms where users can discover, buy, sell, and trade NFTs, providing liquidity and price discovery for the NFT ecosystem.'
     }
   ],
   zk: [
@@ -188,6 +323,51 @@ export const DUMMY_QUESTIONS: Record<Category, Question[]> = {
       answer_idx: 1,
       difficulty: 'medium',
       explanation: 'zk-rollups bundle many transactions into one, reducing blockchain congestion while maintaining security through zero-knowledge proofs.'
+    },
+    {
+      id: 'zk_6',
+      category: 'zk',
+      text: 'What does STARK stand for in zero-knowledge proofs?',
+      choices: ['Scalable Transparent ARgument of Knowledge', 'Secure Transparent ARgument of Knowledge', 'Scalable Trusted ARgument of Knowledge', 'Secure Trusted ARgument of Knowledge'],
+      answer_idx: 0,
+      difficulty: 'hard',
+      explanation: 'STARK stands for Scalable Transparent ARgument of Knowledge, a type of zero-knowledge proof that doesn\'t require a trusted setup.'
+    },
+    {
+      id: 'zk_7',
+      category: 'zk',
+      text: 'What is the main advantage of zk-SNARKs over zk-STARKs?',
+      choices: ['Smaller proof sizes', 'No trusted setup required', 'Faster verification', 'Better privacy'],
+      answer_idx: 0,
+      difficulty: 'hard',
+      explanation: 'zk-SNARKs typically produce smaller proof sizes compared to zk-STARKs, making them more efficient for certain applications.'
+    },
+    {
+      id: 'zk_8',
+      category: 'zk',
+      text: 'What is a common application of zero-knowledge proofs in blockchain?',
+      choices: ['Mining', 'Privacy-preserving transactions', 'Smart contract deployment', 'Token creation'],
+      answer_idx: 1,
+      difficulty: 'medium',
+      explanation: 'Zero-knowledge proofs are commonly used to create privacy-preserving transactions where transaction details are hidden while maintaining verifiability.'
+    },
+    {
+      id: 'zk_9',
+      category: 'zk',
+      text: 'What is the purpose of a trusted setup ceremony in zk-SNARKs?',
+      choices: ['To generate public parameters', 'To verify proofs', 'To create private keys', 'To mine blocks'],
+      answer_idx: 0,
+      difficulty: 'hard',
+      explanation: 'Trusted setup ceremonies generate the initial public parameters needed for zk-SNARKs, and the setup data must be destroyed to maintain security.'
+    },
+    {
+      id: 'zk_10',
+      category: 'zk',
+      text: 'What is the main benefit of using zero-knowledge proofs for identity verification?',
+      choices: ['Faster processing', 'Privacy preservation', 'Lower costs', 'Better security'],
+      answer_idx: 1,
+      difficulty: 'medium',
+      explanation: 'Zero-knowledge proofs allow users to prove they have certain credentials or attributes without revealing the actual credential details, preserving privacy.'
     }
   ]
 };
