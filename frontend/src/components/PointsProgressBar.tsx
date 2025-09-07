@@ -1,23 +1,19 @@
-import React from 'react';
 import { Trophy, Zap, Target } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 
 interface PointsProgressBarProps {
   currentPoints: number;
   targetPoints: number;
   onClaimNFT: () => void;
-  canClaim: boolean;
   isLoading?: boolean;
   onAddTestPoints?: () => void;
   showTestButton?: boolean;
 }
 
-export function PointsProgressBar({ 
+export function PointsProgressBar({
   currentPoints, 
   targetPoints, 
   onClaimNFT, 
-  canClaim, 
   isLoading = false,
   onAddTestPoints,
   showTestButton = false

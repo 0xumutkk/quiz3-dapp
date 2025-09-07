@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Trophy, ExternalLink, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { X, Trophy, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ClaimableNFT, ClaimResult } from '@/types';

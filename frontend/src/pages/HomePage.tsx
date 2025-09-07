@@ -94,7 +94,6 @@ export function HomePage() {
   
   // 3000 points NFT claim system
   const targetPoints = 3000;
-  const canClaim3000NFT = totalPoints >= targetPoints;
   const bronzeNFTs = claimableNFTs.filter(nft => nft.requiredPoints === 3000 && nft.isClaimable);
   
   const handleClaim3000NFT = async () => {
@@ -168,7 +167,6 @@ export function HomePage() {
           currentPoints={totalPoints}
           targetPoints={targetPoints}
           onClaimNFT={handleClaim3000NFT}
-          canClaim={canClaim3000NFT}
           isLoading={isClaimingNFT}
           onAddTestPoints={handleAddTestPoints}
           showTestButton={import.meta.env.DEV && !testPointsAdded && totalPoints < 3000}

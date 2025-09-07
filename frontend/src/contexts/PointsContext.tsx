@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserPoints, PointsTransaction, Category } from '@/types';
 
 interface PointsContextType {
@@ -86,7 +86,7 @@ export function PointsProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(transactions));
   }, [transactions]);
 
-  const addPoints = (category: Category, points: number, source: 'quiz' | 'bonus' | 'claim' = 'quiz') => {
+  const addPoints = (category: Category, points: number, source: 'quiz' | 'bonus' | 'claim' | 'article' = 'quiz') => {
     setUserPoints(prev => {
       const newCategoryPoints = prev.categoryPoints[category] + points;
       const newTotalPoints = prev.totalPoints + points;
