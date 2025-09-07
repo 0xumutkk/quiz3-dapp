@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { Trophy, Zap, Coins, Palette, Shield, TrendingUp, BookOpen, Clock, Target } from 'lucide-react';
@@ -7,6 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Category } from '@/types';
 import { getCategoryEmoji } from '@/lib/utils';
 import { getEducationalArticle } from '@/data/articles';
+import { usePoints } from '@/contexts/PointsContext';
+import { useNFTClaim } from '@/contexts/NFTClaimContext';
+import { NFTClaimModal } from '@/components/NFTClaimModal';
+import { PointsProgressBar } from '@/components/PointsProgressBar';
 
 const categories = [
   {
@@ -42,6 +47,14 @@ const categories = [
 export function HomePage() {
   const navigate = useNavigate();
   const { connected } = useWallet();
+  const { getTotalPoints, collectAllPoints, addPoints } = usePoints();
+  const { getClaimableNFTs, claimNFT } = useNFTClaim();
+  const [isNFTModalOpen, setIsNFTModalOpen] = useState(false);
+  const [isClaimingNFT, setIsClaimingNFT] = useState(false);
+  const [testPointsAdded, setTestPointsAdded] = useState(() => {
+    // Load test button state from localStorage
+    return localStorage.getItem('quiz3_test_points_added') === 'true';
+  });
 
   const handleCategorySelect = (category: Category) => {
     if (!connected) {
@@ -67,6 +80,53 @@ export function HomePage() {
         category 
       } 
     });
+  };
+
+  const handleCollectPoints = () => {
+    collectAllPoints();
+    // Open NFT claim modal
+    setIsNFTModalOpen(true);
+  };
+
+  const totalPoints = getTotalPoints();
+  const claimableNFTs = getClaimableNFTs(totalPoints);
+  const hasClaimableNFTs = claimableNFTs.some(nft => nft.isClaimable);
+  
+  // 3000 points NFT claim system
+  const targetPoints = 3000;
+  const canClaim3000NFT = totalPoints >= targetPoints;
+  const bronzeNFTs = claimableNFTs.filter(nft => nft.requiredPoints === 3000 && nft.isClaimable);
+  
+  const handleClaim3000NFT = async () => {
+    if (bronzeNFTs.length === 0) return;
+    
+    setIsClaimingNFT(true);
+    try {
+      // Claim the first available bronze NFT
+      const result = await claimNFT(bronzeNFTs[0].id);
+      if (result.success) {
+        console.log('NFT claimed successfully:', result.transactionHash);
+        // Show success feedback
+      } else {
+        console.error('Failed to claim NFT:', result.error);
+        // Show error feedback
+      }
+    } catch (error) {
+      console.error('Error claiming NFT:', error);
+    } finally {
+      setIsClaimingNFT(false);
+    }
+  };
+
+  const handleAddTestPoints = () => {
+    if (testPointsAdded) return; // Run only once
+    
+    // Add 200 points for testing
+    addPoints('aptos', 200, 'bonus');
+    setTestPointsAdded(true);
+    
+    // Persist in localStorage
+    localStorage.setItem('quiz3_test_points_added', 'true');
   };
 
   return (
@@ -101,6 +161,54 @@ export function HomePage() {
           </div>
         )}
       </div>
+
+      {/* NFT Progress Bar */}
+      {connected && (
+        <PointsProgressBar
+          currentPoints={totalPoints}
+          targetPoints={targetPoints}
+          onClaimNFT={handleClaim3000NFT}
+          canClaim={canClaim3000NFT}
+          isLoading={isClaimingNFT}
+          onAddTestPoints={handleAddTestPoints}
+          showTestButton={import.meta.env.DEV && !testPointsAdded && totalPoints < 3000}
+        />
+      )}
+
+      {/* Points Collection Section */}
+      {connected && totalPoints > 0 && (
+        <Card className="bg-gradient-to-r from-trivia-orange/20 to-trivia-cyan/20 border-trivia-orange/30">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-trivia-orange/20 to-trivia-cyan/20 flex items-center justify-center">
+                  <Trophy className="h-6 w-6 text-trivia-orange" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-white mb-1">
+                    {hasClaimableNFTs ? 'NFT Rewards Available!' : 'Earned Points Available'}
+                  </h3>
+                  <p className="text-sm text-slate-300">
+                    You have <span className="text-trivia-orange font-semibold">{totalPoints.toLocaleString()}</span> points from completed quizzes
+                    {hasClaimableNFTs && (
+                      <span className="block text-trivia-cyan text-xs mt-1">
+                        🎉 {claimableNFTs.filter(nft => nft.isClaimable).length} NFT{claimableNFTs.filter(nft => nft.isClaimable).length > 1 ? 's' : ''} ready to claim!
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+              <Button 
+                onClick={handleCollectPoints}
+                className="bg-gradient-to-r from-trivia-orange to-trivia-cyan hover:from-trivia-cyan hover:to-trivia-orange text-white border-0"
+              >
+                <Trophy className="h-4 w-4 mr-2" />
+                {hasClaimableNFTs ? 'Claim NFTs' : 'View Rewards'}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -341,6 +449,13 @@ export function HomePage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* NFT Claim Modal */}
+      <NFTClaimModal
+        isOpen={isNFTModalOpen}
+        onClose={() => setIsNFTModalOpen(false)}
+        claimableNFTs={claimableNFTs}
+      />
     </div>
   );
 }

@@ -181,3 +181,51 @@ export interface EducationalArticle {
     relatedTopics: string[];
   };
 }
+
+// Points system types
+export interface UserPoints {
+  totalPoints: number;
+  categoryPoints: Record<Category, number>;
+  lastUpdated: Date;
+}
+
+export interface PointsTransaction {
+  id: string;
+  category: Category;
+  points: number;
+  timestamp: Date;
+  source: 'quiz' | 'bonus' | 'claim' | 'article';
+}
+
+// NFT Claim system types
+export interface NFTClaim {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  requiredPoints: number;
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  category: Category;
+  claimed: boolean;
+  claimDate?: Date;
+  transactionHash?: string;
+}
+
+export interface ClaimableNFT {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  requiredPoints: number;
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  category: Category;
+  isClaimable: boolean;
+  isClaimed: boolean;
+}
+
+export interface ClaimResult {
+  success: boolean;
+  transactionHash?: string;
+  error?: string;
+  nftId?: string;
+}

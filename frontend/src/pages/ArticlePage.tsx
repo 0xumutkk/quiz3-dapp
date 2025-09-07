@@ -1,9 +1,11 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock, Target, BookOpen, CheckCircle, Home } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+import { ArrowLeft, Clock, Target, BookOpen, CheckCircle, Home, Trophy } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Category, EducationalArticle } from '@/types';
 import { getCategoryTheme, getCategoryEmoji } from '@/lib/utils';
+import { usePoints } from '@/contexts/PointsContext';
 
 interface LocationState {
   article: EducationalArticle;
@@ -14,6 +16,12 @@ export function ArticlePage() {
   const location = useLocation();
   const navigate = useNavigate();
   const state = location.state as LocationState;
+  const { addPoints } = usePoints();
+  
+  const [hasReachedEnd, setHasReachedEnd] = useState(false);
+  const [pointsAwarded, setPointsAwarded] = useState(false);
+  const [showPointsNotification, setShowPointsNotification] = useState(false);
+  const endOfArticleRef = useRef<HTMLDivElement>(null);
 
   if (!state) {
     navigate('/');
@@ -22,6 +30,9 @@ export function ArticlePage() {
 
   const { article, category } = state;
   const theme = getCategoryTheme(category);
+  
+  // Generate unique key for this article to track if points were already awarded
+  const articleKey = `article_${category}_${article.title.replace(/\s+/g, '_').toLowerCase()}`;
 
   const handleBackToResults = () => {
     navigate(-1);
@@ -31,8 +42,71 @@ export function ArticlePage() {
     navigate('/');
   };
 
+  // Check if points were already awarded for this article
+  useEffect(() => {
+    const alreadyAwarded = localStorage.getItem(`quiz3_${articleKey}`) === 'true';
+    setPointsAwarded(alreadyAwarded);
+  }, [articleKey]);
+
+  // Scroll detection for end of article
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && !hasReachedEnd && !pointsAwarded) {
+          setHasReachedEnd(true);
+          
+          // Award points for reading the article
+          addPoints(category, 200, 'article');
+          setPointsAwarded(true);
+          setShowPointsNotification(true);
+          
+          // Save to localStorage to prevent duplicate awards
+          localStorage.setItem(`quiz3_${articleKey}`, 'true');
+          
+          // Hide notification after 5 seconds
+          setTimeout(() => {
+            setShowPointsNotification(false);
+          }, 5000);
+        }
+      },
+      {
+        threshold: 0.8, // Trigger when 80% of the element is visible
+      }
+    );
+
+    if (endOfArticleRef.current) {
+      observer.observe(endOfArticleRef.current);
+    }
+
+    return () => {
+      if (endOfArticleRef.current) {
+        observer.unobserve(endOfArticleRef.current);
+      }
+    };
+  }, [hasReachedEnd, pointsAwarded, category, addPoints, articleKey]);
+
   return (
     <div className={`min-h-screen bg-${theme.bgGradient} transition-all duration-500`}>
+      {/* Points Notification */}
+      {showPointsNotification && (
+        <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-right-full duration-500">
+          <Card className={`bg-gradient-to-r from-trivia-orange/90 to-trivia-cyan/90 border-trivia-orange/50 shadow-2xl backdrop-blur-sm`}>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
+                  <Trophy className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-white font-semibold">Article Completed!</p>
+                  <p className="text-white/90 text-sm">+200 points earned</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+      
       <div className="max-w-4xl mx-auto p-6 space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -149,7 +223,7 @@ export function ArticlePage() {
         </Card>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center" ref={endOfArticleRef}>
           <Button 
             onClick={handleBackToResults}
             size="lg" 
@@ -169,6 +243,16 @@ export function ArticlePage() {
             Back Home
           </Button>
         </div>
+        
+        {/* Reading Completion Indicator */}
+        {pointsAwarded && (
+          <div className={`text-center py-4`}>
+            <div className={`inline-flex items-center gap-2 px-4 py-2 bg-${theme.primary}/20 text-${theme.primary} rounded-xl border border-${theme.primary}/30`}>
+              <Trophy className="h-4 w-4" />
+              <span className="text-sm font-medium">Article completed - 200 points earned!</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Clock, Trophy } from 'lucide-react';
 import { WalletButton } from './WalletButton';
+import { usePoints } from '@/contexts/PointsContext';
 import { getSeasonDates } from '@/lib/utils';
 
 export function Header() {
   const [timeLeft, setTimeLeft] = useState<string>('');
+  const navigate = useNavigate();
+  const { getTotalPoints } = usePoints();
 
   useEffect(() => {
     const updateCountdown = () => {
@@ -41,28 +45,56 @@ export function Header() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="relative">
+          <div 
+            className="relative cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={() => navigate('/')}
+          >
             <img src="/logo.svg" alt="Quiz3" className="h-10 w-auto header-logo-mobile-responsive" />
           </div>
         </div>
 
-        {/* Season Countdown */}
-        <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/50 border border-slate-700/50">
-          <Clock className="h-4 w-4 text-trivia-blue" />
-          <div className="text-sm">
-            <div className="text-xs text-slate-400">Season Ends In</div>
-            <div className="font-mono font-medium text-trivia-blue">
-              {timeLeft}
+        {/* Center Section - Season Countdown and Points */}
+        <div className="hidden sm:flex items-center gap-4">
+          {/* Season Countdown */}
+          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/50 border border-slate-700/50">
+            <Clock className="h-4 w-4 text-trivia-blue" />
+            <div className="text-sm">
+              <div className="text-xs text-slate-400">Season Ends In</div>
+              <div className="font-mono font-medium text-trivia-blue">
+                {timeLeft}
+              </div>
+            </div>
+          </div>
+
+          {/* Total Points */}
+          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-trivia-orange/20 to-trivia-cyan/20 border border-trivia-orange/30">
+            <Trophy className="h-4 w-4 text-trivia-orange" />
+            <div className="text-sm">
+              <div className="text-xs text-slate-400">Total Points</div>
+              <div className="font-mono font-medium text-trivia-orange">
+                {getTotalPoints().toLocaleString()}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Mobile Season Display */}
-        <div className="sm:hidden flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-800/50 header-countdown-mobile-responsive">
-          <Clock className="h-3 w-3 text-trivia-blue" />
-          <span className="text-xs font-mono text-trivia-blue">
-            {timeLeft}
-          </span>
+        {/* Mobile Display */}
+        <div className="sm:hidden flex items-center gap-2">
+          {/* Mobile Points */}
+          <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-gradient-to-r from-trivia-orange/20 to-trivia-cyan/20 border border-trivia-orange/30">
+            <Trophy className="h-3 w-3 text-trivia-orange" />
+            <span className="text-xs font-mono text-trivia-orange">
+              {getTotalPoints().toLocaleString()}
+            </span>
+          </div>
+          
+          {/* Mobile Season Display */}
+          <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-800/50 header-countdown-mobile-responsive">
+            <Clock className="h-3 w-3 text-trivia-blue" />
+            <span className="text-xs font-mono text-trivia-blue">
+              {timeLeft}
+            </span>
+          </div>
         </div>
 
         {/* Wallet Connection */}

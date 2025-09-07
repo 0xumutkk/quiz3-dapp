@@ -76,6 +76,45 @@ Quiz3 is a cutting-edge Web3 trivia application that combines education with gam
 - **Reward Claims**: Secure APT token distribution
 - **Merkle Trees**: Off-chain calculation, on-chain verification
 
+## 🪙 NFT Rewards & Claim (Testnet)
+
+- **Reward Tiers**: Per-category NFTs at thresholds
+  - Bronze at **3,000 points**
+  - Gold at **5,000 points**
+- **Progress Bar**: Animated "fuel-like" progress towards 3,000 with a claim button that unlocks exactly at the threshold.
+- **Claim Modal**: Displays claimable NFTs with names, rarity, and images (SVG assets under `frontend/public/nfts`).
+- **Real Blockchain TX (Testnet)**: Uses `@aptos-labs/wallet-adapter-react` + `@aptos-labs/ts-sdk` to build, sign, submit, and confirm transactions on Aptos Testnet.
+- **Explorer Link**: Transactions can be viewed at `https://explorer.aptoslabs.com/txn/{TX_HASH}?network=testnet`.
+- **Faucet**: For testing, get APT at `https://aptos.dev/network/faucet`.
+
+Wallet adapter configuration explicitly targets testnet:
+
+```tsx
+<AptosWalletAdapterProvider
+  autoConnect
+  dappConfig={{
+    network: Network.TESTNET,
+    aptosConnectDappId: "quiz3-trivia-game",
+  }}
+>
+  {/* ... */}
+</AptosWalletAdapterProvider>
+```
+
+NFT claim flow (summary):
+- Check points and claimable NFTs.
+- Open modal and select an eligible NFT (e.g., Bronze at 3,000 points).
+- Sign and submit a testnet transaction; display explorer link on success.
+
+Assets:
+- SVGs for each category/rarity live at `frontend/public/nfts/*` (e.g., `aptos-bronze.svg`, `defi-gold.svg`, etc.).
+
+## 🧠 Earning Points
+
+- **Quizzes**: Points are awarded upon completion based on performance.
+- **Articles**: Reading an educational article grants **+200 points once per article** when the reader scrolls to the end (persisted via `localStorage`).
+- **Development Helper (Dev Only)**: A hidden progress-bar test button can grant **+200 test points once per session** to quickly test the claim flow in development builds.
+
 ---
 
 ## 🏗️ Technical Architecture

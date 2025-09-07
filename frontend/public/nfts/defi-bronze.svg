@@ -1,0 +1,80 @@
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Bronze gradient -->
+    <linearGradient id="bronzeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#CD7F32;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#B8860B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B4513;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Background gradient -->
+    <radialGradient id="bgGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16213e;stop-opacity:1" />
+    </radialGradient>
+    
+    <!-- Glow effect -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="400" fill="url(#bgGradient)" rx="20"/>
+  
+  <!-- Outer ring -->
+  <circle cx="200" cy="200" r="180" fill="none" stroke="url(#bronzeGradient)" stroke-width="8" opacity="0.3"/>
+  <circle cx="200" cy="200" r="160" fill="none" stroke="url(#bronzeGradient)" stroke-width="4" opacity="0.5"/>
+  
+  <!-- Main badge circle -->
+  <circle cx="200" cy="200" r="140" fill="url(#bronzeGradient)" filter="url(#glow)"/>
+  
+  <!-- Inner circle -->
+  <circle cx="200" cy="200" r="120" fill="none" stroke="#FFD700" stroke-width="2" opacity="0.8"/>
+  
+  <!-- DeFi logo area -->
+  <circle cx="200" cy="200" r="100" fill="#0D1117" opacity="0.9"/>
+  
+  <!-- DeFi symbol (Dollar sign with blockchain elements) -->
+  <g transform="translate(200, 200)">
+    <!-- Dollar sign -->
+    <path d="M-25,-30 L-25,30 M-20,-30 L-20,30 M-20,-20 Q-10,-25 0,-20 Q10,-15 20,-20 Q30,-25 20,-30 Q10,-35 0,-30 Q-10,-35 -20,-30 Z" 
+          fill="none" stroke="#00D4AA" stroke-width="4" filter="url(#glow)"/>
+    <path d="M-20,-10 Q-10,-15 0,-10 Q10,-5 20,-10 Q30,-15 20,-20 Q10,-25 0,-20 Q-10,-25 -20,-20 Z" 
+          fill="none" stroke="#00D4AA" stroke-width="4" filter="url(#glow)"/>
+    
+    <!-- Blockchain blocks -->
+    <rect x="-35" y="-15" width="8" height="8" fill="#00D4AA" opacity="0.6"/>
+    <rect x="-25" y="-15" width="8" height="8" fill="#00D4AA" opacity="0.6"/>
+    <rect x="-15" y="-15" width="8" height="8" fill="#00D4AA" opacity="0.6"/>
+    <rect x="7" y="-15" width="8" height="8" fill="#00D4AA" opacity="0.6"/>
+    <rect x="17" y="-15" width="8" height="8" fill="#00D4AA" opacity="0.6"/>
+    <rect x="27" y="-15" width="8" height="8" fill="#00D4AA" opacity="0.6"/>
+  </g>
+  
+  <!-- Decorative elements -->
+  <g opacity="0.6">
+    <!-- Top decoration -->
+    <circle cx="200" cy="60" r="8" fill="url(#bronzeGradient)"/>
+    <circle cx="200" cy="60" r="4" fill="#FFD700"/>
+    
+    <!-- Bottom decoration -->
+    <circle cx="200" cy="340" r="8" fill="url(#bronzeGradient)"/>
+    <circle cx="200" cy="340" r="4" fill="#FFD700"/>
+    
+    <!-- Side decorations -->
+    <circle cx="60" cy="200" r="6" fill="url(#bronzeGradient)"/>
+    <circle cx="340" cy="200" r="6" fill="url(#bronzeGradient)"/>
+  </g>
+  
+  <!-- Bronze text -->
+  <text x="200" y="320" text-anchor="middle" fill="url(#bronzeGradient)" font-family="Arial, sans-serif" font-size="16" font-weight="bold">BRONZE</text>
+  <text x="200" y="340" text-anchor="middle" fill="#FFD700" font-family="Arial, sans-serif" font-size="12">TRADER</text>
+  
+  <!-- Points requirement -->
+  <text x="200" y="360" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="10">3000 POINTS</text>
+</svg>

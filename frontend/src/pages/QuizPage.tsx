@@ -8,6 +8,7 @@ import { QuizQuestion } from '@/components/QuizQuestion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { usePoints } from '@/contexts/PointsContext';
 
 import { Category, Question, QuizResponse } from '@/types';
 import { getRandomQuestions } from '@/data/questions';
@@ -19,6 +20,7 @@ export function QuizPage() {
   const { category } = useParams<{ category: Category }>();
   const navigate = useNavigate();
   const { connected } = useWallet();
+  const { addPoints } = usePoints();
 
   // Quiz state
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -95,7 +97,11 @@ export function QuizPage() {
   // Handle next question
   const handleNextQuestion = useCallback(() => {
     if (currentQuestionIndex + 1 >= questions.length) {
-      // Quiz completed
+      // Quiz completed - add points to user's total
+      if (category && totalScore > 0) {
+        addPoints(category, totalScore, 'quiz');
+      }
+      
       navigate('/results', {
         state: {
           category,
@@ -113,7 +119,7 @@ export function QuizPage() {
     setShowResult(false);
     setTimeLeft(QUESTION_TIME_LIMIT);
     setIsPaused(false);
-  }, [currentQuestionIndex, questions.length, navigate, category, responses, totalScore]);
+  }, [currentQuestionIndex, questions.length, navigate, category, responses, totalScore, addPoints]);
 
   // Timer countdown
   useEffect(() => {
