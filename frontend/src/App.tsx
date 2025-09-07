@@ -29,10 +29,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AptosWalletAdapterProvider 
         autoConnect={true}
-        dappConfig={{
-          network: Network.TESTNET,
-          aptosConnectDappId: "quiz3-trivia-game"
-        }}
+        network={Network.TESTNET}
         onError={(error) => {
           console.error('Wallet adapter error:', error);
         }}
