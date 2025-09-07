@@ -1,1 +1,17 @@
+[package]
+name = "Quiz3NFT"
+version = "1.0.0"
+authors = ["0xUmutkk"]
 
+[addresses]
+quiz_nft = "0xfe79060fa4c-3f0fa8c02ad68c61507f775eb10badf9"
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-core.git"
+subdir = "aptos-move/framework/aptos-framework"
+rev = "mainnet"
+
+[dependencies.AptosTokenObjects]
+git = "https://github.com/aptos-labs/aptos-core.git"
+subdir = "aptos-move/framework/aptos-token-objects"
+rev = "mainnet"
