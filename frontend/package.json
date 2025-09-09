@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "@aptos-labs/ts-sdk": "^2.0.0",
-    "@aptos-labs/wallet-adapter-react": "^2.0.0",
     "@aptos-labs/wallet-adapter-ant-design": "^2.0.0",
     "@aptos-labs/wallet-adapter-mui-design": "^2.0.0",
+    "@aptos-labs/wallet-adapter-react": "^2.0.0",
     "@radix-ui/react-progress": "^1.0.3",
     "@radix-ui/react-tabs": "^1.0.4",
     "@tanstack/react-query": "^5.0.0",
@@ -23,6 +23,7 @@
     "lucide-react": "^0.294.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.6.0",
     "react-router-dom": "^6.20.1",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7"

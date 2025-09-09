@@ -66,6 +66,9 @@ workbox-*.js
 # Move build artifacts
 contract/build/
 
+# Aptos core testnet (large repository, not needed)
+contract/aptos-core-testnet/
+
 # Temporary files
 *.tmp
 *.temp

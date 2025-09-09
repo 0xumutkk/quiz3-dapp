@@ -1,10 +1,14 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Trophy, Target, Clock, Zap, Home, Share2, BookOpen, ArrowRight } from 'lucide-react';
+import { Trophy, Target, Clock, Zap, Home, Share2, BookOpen, ArrowRight, Coins } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Category, QuizResponse } from '@/types';
 import { getCategoryEmoji, getCategoryTheme } from '@/lib/utils';
 import { getEducationalArticle, shouldRecommendArticle } from '@/data/articles';
+import { usePoints } from '@/contexts/PointsContext';
+import { useToken } from '@/contexts/TokenContext';
+import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 
 interface LocationState {
   category: Category;
@@ -16,6 +20,9 @@ interface LocationState {
 export function ResultsPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { claimEarnedQ3P } = usePoints();
+  const { claimEarnedPoints } = useToken();
+  const [isClaiming, setIsClaiming] = useState(false);
   const state = location.state as LocationState;
 
   if (!state) {
@@ -35,6 +42,32 @@ export function ResultsPage() {
   const shouldRecommend = shouldRecommendArticle(correctAnswers, responses.length);
   const article = shouldRecommend ? getEducationalArticle(category) : null;
   const theme = getCategoryTheme(category);
+
+  const handleClaimQ3P = async () => {
+    if (totalScore === 0) {
+      toast.error('No Q3P to claim!');
+      return;
+    }
+
+    setIsClaiming(true);
+    try {
+      // Use TokenContext's claimEarnedPoints for real blockchain transaction
+      await claimEarnedPoints(totalScore);
+
+      // After successful blockchain transaction, update PointsContext state
+      const success = await claimEarnedQ3P();
+      if (success) {
+        toast.success(`Successfully claimed ${totalScore.toLocaleString()} Q3P tokens!`);
+      } else {
+        toast.error('Failed to update local state. Please refresh the page.');
+      }
+    } catch (error) {
+      console.error('Claim failed:', error);
+      toast.error('Failed to claim Q3P tokens. Please try again.');
+    } finally {
+      setIsClaiming(false);
+    }
+  };
 
   const handleShare = async () => {
     const shareData = {
@@ -91,14 +124,36 @@ export function ResultsPage() {
         </p>
       </div>
 
-      {/* Score Summary */}
+      {/* Q3P Summary */}
       <Card className="card-glow">
         <CardHeader>
           <CardTitle className="text-center gradient-text text-3xl">
-            {totalScore.toLocaleString()} Points
+            {totalScore.toLocaleString()} Q3P Earned
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="text-center">
+          <p className="text-slate-400 mb-4">
+            Congratulations! You've earned Q3P tokens for your quiz performance.
+          </p>
+          <Button
+            onClick={handleClaimQ3P}
+            disabled={isClaiming || totalScore === 0}
+            className="bg-gradient-to-r from-trivia-cyan to-trivia-blue hover:from-trivia-blue hover:to-trivia-cyan text-white font-bold px-8 py-3"
+          >
+            <Coins className="h-5 w-5 mr-2" />
+            {isClaiming ? 'Claiming...' : `Claim ${totalScore.toLocaleString()} Q3P to Wallet`}
+          </Button>
+          {totalScore === 0 && (
+            <p className="text-sm text-slate-500 mt-2">
+              No Q3P earned this quiz. Try again to earn rewards!
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Statistics */}
+      <Card>
+        <CardContent className="pt-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div className="space-y-2">
               <Target className="h-8 w-8 text-trivia-blue mx-auto" />

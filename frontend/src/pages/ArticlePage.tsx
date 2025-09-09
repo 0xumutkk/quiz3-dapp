@@ -57,7 +57,7 @@ export function ArticlePage() {
           setHasReachedEnd(true);
           
           // Award points for reading the article
-          addPoints(category, 200, 'article');
+          addPoints(category, 200);
           setPointsAwarded(true);
           setShowPointsNotification(true);
           

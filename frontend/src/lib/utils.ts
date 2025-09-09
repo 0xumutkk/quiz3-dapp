@@ -5,9 +5,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatAddress(address: string): string {
+export function formatAddress(address: any): string {
   if (!address) return ""
-  return `${address.slice(0, 6)}...${address.slice(-4)}`
+  const addrStr = typeof address === 'string'
+    ? address
+    : (address?.toString ? address.toString() : String(address))
+  if (!addrStr) return ""
+  if (addrStr.length <= 10) return addrStr
+  return `${addrStr.slice(0, 6)}...${addrStr.slice(-4)}`
 }
 
 export function formatTime(seconds: number): string {

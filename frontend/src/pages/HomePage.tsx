@@ -12,6 +12,8 @@ import { usePoints } from '@/contexts/PointsContext';
 import { useNFTClaim } from '@/contexts/NFTClaimContext';
 import { NFTClaimModal } from '@/components/NFTClaimModal';
 import { PointsProgressBar } from '@/components/PointsProgressBar';
+import { useToken } from '@/contexts/TokenContext';
+import { useNotification } from '@/contexts/NotificationContext';
 
 const categories = [
   {
@@ -47,10 +49,17 @@ const categories = [
 export function HomePage() {
   const navigate = useNavigate();
   const { connected } = useWallet();
-  const { getTotalPoints, collectAllPoints, addPoints } = usePoints();
-  const { getClaimableNFTs, claimNFT } = useNFTClaim();
+  const { claimEarnedQ3P, getTotalEarnedQ3P, getNFTThreshold } = usePoints();
+  const { getClaimableNFTs } = useNFTClaim();
+  const {
+    claimEarnedPoints,
+    loading: tokenLoading,
+    balance: q3pBalance,
+    fetchBalance,
+  } = useToken();
+  const { showNotification } = useNotification();
   const [isNFTModalOpen, setIsNFTModalOpen] = useState(false);
-  const [isClaimingNFT, setIsClaimingNFT] = useState(false);
+  const [isConverting, setIsConverting] = useState(false);
   const [testPointsAdded, setTestPointsAdded] = useState(() => {
     // Load test button state from localStorage
     return localStorage.getItem('quiz3_test_points_added') === 'true';
@@ -83,50 +92,60 @@ export function HomePage() {
   };
 
   const handleCollectPoints = () => {
-    collectAllPoints();
     // Open NFT claim modal
     setIsNFTModalOpen(true);
   };
 
-  const totalPoints = getTotalPoints();
-  const claimableNFTs = getClaimableNFTs(totalPoints);
+  const totalEarnedQ3P = getTotalEarnedQ3P();
+  const claimableNFTs = getClaimableNFTs(totalEarnedQ3P);
   const hasClaimableNFTs = claimableNFTs.some(nft => nft.isClaimable);
-  
-  // 3000 points NFT claim system
-  const targetPoints = 3000;
-  const bronzeNFTs = claimableNFTs.filter(nft => nft.requiredPoints === 3000 && nft.isClaimable);
+
+  // NFT claim system based on Q3P
+  const targetQ3P = getNFTThreshold();
+  const bronzeNFTs = claimableNFTs.filter(nft => nft.requiredPoints === targetQ3P && nft.isClaimable);
   
   const handleClaim3000NFT = async () => {
     if (bronzeNFTs.length === 0) return;
-    
-    setIsClaimingNFT(true);
-    try {
-      // Claim the first available bronze NFT
-      const result = await claimNFT(bronzeNFTs[0].id);
-      if (result.success) {
-        console.log('NFT claimed successfully:', result.transactionHash);
-        // Show success feedback
-      } else {
-        console.error('Failed to claim NFT:', result.error);
-        // Show error feedback
-      }
-    } catch (error) {
-      console.error('Error claiming NFT:', error);
-    } finally {
-      setIsClaimingNFT(false);
-    }
+    setIsNFTModalOpen(true);
   };
 
-  const handleAddTestPoints = () => {
+  const handleAddTestQ3P = () => {
     if (testPointsAdded) return; // Run only once
-    
-    // Add 200 points for testing
-    addPoints('aptos', 200, 'bonus');
+
+    // Add 200 Q3P for testing
+    // Note: This is for testing only - in production, Q3P would be earned through quizzes
+    console.log('Adding test Q3P for development...');
     setTestPointsAdded(true);
-    
+
     // Persist in localStorage
     localStorage.setItem('quiz3_test_points_added', 'true');
   };
+
+  const handleClaimEarnedQ3P = async () => {
+    if (totalEarnedQ3P === 0) return;
+
+    setIsConverting(true);
+
+    try {
+      // Use TokenContext's claimEarnedPoints for real blockchain transaction
+      await claimEarnedPoints(totalEarnedQ3P);
+
+      // After successful blockchain transaction, update PointsContext state
+      const success = await claimEarnedQ3P();
+      if (success) {
+        showNotification(`Successfully claimed ${totalEarnedQ3P.toLocaleString()} Q3P tokens to your wallet!`, 'success');
+        await fetchBalance(); // Refresh on-chain balance
+      } else {
+        showNotification('Failed to update local state. Please refresh the page.', 'error');
+      }
+    } catch (error: any) {
+      console.error('Q3P claim failed:', error);
+      showNotification(`Claim failed: ${error.message || 'Please try again.'}`, 'error');
+    } finally {
+      setIsConverting(false);
+    }
+  };
+
 
   return (
     <div className="max-w-7xl mx-auto space-y-12">
@@ -161,20 +180,63 @@ export function HomePage() {
         )}
       </div>
 
+      {/* On-Chain Points Section */}
+      <section>
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold tracking-tight gradient-text">Q3P Rewards</h2>
+          <p className="mt-2 text-lg text-slate-400">
+            Claim your earned Q3P tokens from quizzes.
+          </p>
+        </div>
+        <div className="max-w-md mx-auto space-y-4">
+          <Card className="bg-slate-900/50 border-slate-700/50">
+            <CardContent className="p-6 text-center">
+              <div className="mb-4">
+                <p className="text-slate-400">Your Q3P Token Balance</p>
+                <p className="text-4xl font-bold text-trivia-cyan">
+                  {q3pBalance !== null ? q3pBalance.toLocaleString() : 'Loading...'}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-slate-900/50 border-slate-700/50">
+            <CardContent className="p-6 text-center">
+              <div className="mb-4">
+                <p className="text-slate-400">Your Earned Q3P</p>
+                <p className="text-4xl font-bold text-trivia-orange">
+                  {totalEarnedQ3P.toLocaleString()}
+                </p>
+              </div>
+              <Button
+                onClick={handleClaimEarnedQ3P}
+                disabled={totalEarnedQ3P === 0 || isConverting}
+                className="w-full bg-trivia-orange hover:bg-trivia-orange/80 text-slate-900 font-bold"
+              >
+                {isConverting ? 'Claiming...' : `Claim Q3P to Wallet`}
+              </Button>
+              <p className="text-xs text-slate-500 mt-2">
+                Claim your earned Q3P tokens directly to your wallet.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
       {/* NFT Progress Bar */}
       {connected && (
         <PointsProgressBar
-          currentPoints={totalPoints}
-          targetPoints={targetPoints}
+          currentPoints={totalEarnedQ3P}
+          targetPoints={targetQ3P}
           onClaimNFT={handleClaim3000NFT}
-          isLoading={isClaimingNFT}
-          onAddTestPoints={handleAddTestPoints}
-          showTestButton={import.meta.env.DEV && !testPointsAdded && totalPoints < 3000}
+          isLoading={false}
+          onAddTestPoints={handleAddTestQ3P}
+          showTestButton={import.meta.env.DEV && !testPointsAdded && totalEarnedQ3P < targetQ3P}
         />
       )}
 
-      {/* Points Collection Section */}
-      {connected && totalPoints > 0 && (
+      {/* Q3P Collection Section */}
+      {connected && totalEarnedQ3P > 0 && (
         <Card className="bg-gradient-to-r from-trivia-orange/20 to-trivia-cyan/20 border-trivia-orange/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -184,10 +246,10 @@ export function HomePage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-white mb-1">
-                    {hasClaimableNFTs ? 'NFT Rewards Available!' : 'Earned Points Available'}
+                    {hasClaimableNFTs ? 'NFT Rewards Available!' : 'Earned Q3P Available'}
                   </h3>
                   <p className="text-sm text-slate-300">
-                    You have <span className="text-trivia-orange font-semibold">{totalPoints.toLocaleString()}</span> points from completed quizzes
+                    You have <span className="text-trivia-orange font-semibold">{totalEarnedQ3P.toLocaleString()}</span> Q3P from completed quizzes
                     {hasClaimableNFTs && (
                       <span className="block text-trivia-cyan text-xs mt-1">
                         🎉 {claimableNFTs.filter(nft => nft.isClaimable).length} NFT{claimableNFTs.filter(nft => nft.isClaimable).length > 1 ? 's' : ''} ready to claim!
@@ -196,7 +258,7 @@ export function HomePage() {
                   </p>
                 </div>
               </div>
-              <Button 
+              <Button
                 onClick={handleCollectPoints}
                 className="bg-gradient-to-r from-trivia-orange to-trivia-cyan hover:from-trivia-cyan hover:to-trivia-orange text-white border-0"
               >

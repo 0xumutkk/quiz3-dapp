@@ -62,7 +62,7 @@ export function ClaimPage() {
         setSeasonInfo(season);
 
         // Fetch user claim status
-        const claimStatus = await getUserClaimStatus(account.address);
+        const claimStatus = await getUserClaimStatus(account.address.toString());
         setUserClaimStatus(claimStatus);
 
       } catch (err) {
@@ -87,7 +87,7 @@ export function ClaimPage() {
       const { proofs } = generateSeasonMerkleTree(sampleRewards);
       
       // Find user's proof (in real app, this would come from backend)
-      const userProof = proofs.get(account.address);
+      const userProof = proofs.get(account.address.toString());
       if (!userProof) {
         throw new Error('No rewards found for this address');
       }
@@ -106,7 +106,7 @@ export function ClaimPage() {
       if (result.success) {
         alert(`Successfully claimed ${amount} APT for season ${seasonId}!`);
         // Refresh data
-        const claimStatus = await getUserClaimStatus(account.address);
+        const claimStatus = await getUserClaimStatus(account.address.toString());
         setUserClaimStatus(claimStatus);
       } else {
         throw new Error(result.error || 'Claim failed');
@@ -203,7 +203,7 @@ export function ClaimPage() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-bold text-white mb-1">Connected Wallet</h3>
-              <p className="font-mono text-sm text-slate-300">{account?.address}</p>
+              <p className="font-mono text-sm text-slate-300">{account?.address?.toString()}</p>
             </div>
             <div className="text-right">
               <div className="text-2xl font-bold text-trivia-cyan">350.5 APT</div>

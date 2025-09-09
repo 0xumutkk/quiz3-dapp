@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Trophy, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,10 +13,16 @@ interface NFTClaimModalProps {
 
 export function NFTClaimModal({ isOpen, onClose, claimableNFTs }: NFTClaimModalProps) {
   const { claimNFT, isLoading } = useNFTClaim();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   const [claimingNFT, setClaimingNFT] = useState<string | null>(null);
   const [claimResult, setClaimResult] = useState<ClaimResult | null>(null);
 
-  if (!isOpen) return null;
+  // Only render if modal is open and component is mounted (prevents provider issues during hot reload)
+  if (!isOpen || !isMounted) return null;
 
   const handleClaimNFT = async (nftId: string) => {
     setClaimingNFT(nftId);

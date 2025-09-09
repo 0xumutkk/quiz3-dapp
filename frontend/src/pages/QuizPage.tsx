@@ -12,7 +12,7 @@ import { usePoints } from '@/contexts/PointsContext';
 
 import { Category, Question, QuizResponse } from '@/types';
 import { getRandomQuestions } from '@/data/questions';
-import { calculateScore, getCategoryEmoji, getCategoryTheme } from '@/lib/utils';
+import { getCategoryEmoji, getCategoryTheme } from '@/lib/utils';
 
 const QUESTION_TIME_LIMIT = 15; // seconds
 
@@ -57,7 +57,9 @@ export function QuizPage() {
     const startTime = Date.now() - (QUESTION_TIME_LIMIT - timeLeft) * 1000;
     const elapsedMs = Date.now() - startTime;
     const currentQuestion = questions[currentQuestionIndex];
-    const isCorrect = originalIndex === currentQuestion.answer_idx && originalIndex >= 0;
+    
+    // If no answer was selected (timer ran out), treat as incorrect
+    const isCorrect = originalIndex >= 0 && originalIndex === currentQuestion.answer_idx;
 
     // Calculate score
     let newStreak = streak;
@@ -67,26 +69,34 @@ export function QuizPage() {
       newStreak = 0;
     }
 
-    const points = calculateScore(isCorrect, elapsedMs / 1000, QUESTION_TIME_LIMIT, newStreak);
+    // Q3P calculation: 100 points for correct answer + streak bonus
+    const baseQ3P = isCorrect ? 100 : 0;
+    const streakBonus = isCorrect ? Math.min(newStreak * 10, 100) : 0; // Max 100 bonus for streak
+    const q3pEarned = baseQ3P + streakBonus;
 
     // Create response record
     const response: QuizResponse = {
       id: `${currentQuestion.id}_${Date.now()}`,
       session_id: `session_${Date.now()}`, // TODO: Use real session ID
       question_id: currentQuestion.id,
-      chosen_idx: originalIndex,
+      chosen_idx: originalIndex >= 0 ? originalIndex : -1, // -1 means no answer selected
       elapsed_ms: elapsedMs,
       correct: isCorrect,
-      points_earned: points,
+      points_earned: q3pEarned,
     };
 
     // Update state
     setSelectedAnswer(shuffledIndex >= 0 ? shuffledIndex : undefined);
     setResponses(prev => [...prev, response]);
     setStreak(newStreak);
-    setTotalScore(prev => prev + points);
+    setTotalScore(prev => prev + q3pEarned);
     setShowResult(true);
     setIsPaused(true);
+
+    // Add earned Q3P to context
+    if (q3pEarned > 0) {
+      addPoints(category as Category, q3pEarned);
+    }
 
     // Auto-advance after showing result
     setTimeout(() => {
@@ -97,11 +107,7 @@ export function QuizPage() {
   // Handle next question
   const handleNextQuestion = useCallback(() => {
     if (currentQuestionIndex + 1 >= questions.length) {
-      // Quiz completed - add points to user's total
-      if (category && totalScore > 0) {
-        addPoints(category, totalScore, 'quiz');
-      }
-      
+      // Quiz completed - navigate to results (Q3P already added per question)
       navigate('/results', {
         state: {
           category,
@@ -119,7 +125,7 @@ export function QuizPage() {
     setShowResult(false);
     setTimeLeft(QUESTION_TIME_LIMIT);
     setIsPaused(false);
-  }, [currentQuestionIndex, questions.length, navigate, category, responses, totalScore, addPoints]);
+  }, [currentQuestionIndex, questions.length, navigate, category, responses, totalScore]);
 
   // Timer countdown
   useEffect(() => {
@@ -128,9 +134,10 @@ export function QuizPage() {
     const timer = setTimeout(() => {
       setTimeLeft(time => {
         if (time <= 1) {
-          // Timer is about to reach 0, trigger time up
+          // Timer reached 0, handle time up
           setTimeout(() => {
             if (selectedAnswer === undefined && !showResult && !isPaused) {
+              // No answer was selected, treat as incorrect
               handleAnswerSubmit(-1, -1);
             }
           }, 0);

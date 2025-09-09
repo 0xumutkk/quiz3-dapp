@@ -3,45 +3,37 @@ import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
 // Aptos client configuration
 const aptosConfig = new AptosConfig({
   network: Network.TESTNET,
+  fullnode: "https://fullnode.testnet.aptoslabs.com/v1",
+  faucet: "https://faucet.testnet.aptoslabs.com",
 });
 
 export const aptos = new Aptos(aptosConfig);
 export const aptosClient = aptos; // Alias for compatibility
 
 // Contract configuration
-export const MODULE_ADDRESS = import.meta.env.VITE_MODULE_ADDRESS || "0x1"; // Will be updated after deployment
-export const MODULE_NAME = "trivia_game";
+export const MODULE_ADDRESS = "0x9cc9a9afd4c0466f5bcdba723c02d35b7f771ed880ca75e6addb9432c77b5af9"; // Deployed address
+export const Q3P_TOKEN_MODULE = "q3p_token";
+export const NFT_MODULE = "quiz_nft";
 
 // Contract functions
 export const FUNCTIONS = {
-  SET_SEASON_ROOT: `${MODULE_ADDRESS}::${MODULE_NAME}::set_season_root`,
-  CLAIM: `${MODULE_ADDRESS}::${MODULE_NAME}::claim`,
-  CREATE_SEASON: `${MODULE_ADDRESS}::${MODULE_NAME}::create_season`,
+  CLAIM_POINTS: `${MODULE_ADDRESS}::${Q3P_TOKEN_MODULE}::claim_points`,
+  CLAIM_EARNED_POINTS: `${MODULE_ADDRESS}::${Q3P_TOKEN_MODULE}::claim_earned_points`,
+  REGISTER: `${MODULE_ADDRESS}::${Q3P_TOKEN_MODULE}::register`,
+  BURN: `${MODULE_ADDRESS}::${Q3P_TOKEN_MODULE}::burn`,
+  MINT_NFT: `${MODULE_ADDRESS}::${NFT_MODULE}::mint_nft`,
 };
 
 // View functions
 export const VIEW_FUNCTIONS = {
-  GET_CURRENT_SEASON: `${MODULE_ADDRESS}::${MODULE_NAME}::get_current_season`,
-  GET_SEASON: `${MODULE_ADDRESS}::${MODULE_NAME}::get_season`,
-  HAS_CLAIMED: `${MODULE_ADDRESS}::${MODULE_NAME}::has_claimed`,
-  GET_USER_CLAIM: `${MODULE_ADDRESS}::${MODULE_NAME}::get_user_claim`,
-  GET_CURRENT_SEASON_ID: `${MODULE_ADDRESS}::${MODULE_NAME}::get_current_season_id`,
+  GET_BALANCE: `${MODULE_ADDRESS}::${Q3P_TOKEN_MODULE}::get_balance`,
 };
 
-// Type definitions
-export interface Season {
-  id: string;
-  start_at: string;
-  end_at: string;
-  status: number;
-  merkle_root: number[];
-}
-
-export interface ClaimRecord {
-  user: string;
-  amount: string;
-  claimed: boolean;
-  claimed_tx: number[];
+// Type definitions for Q3P and NFT contracts
+export interface NFTMetadata {
+  name: string;
+  description: string;
+  uri: string;
 }
 
 // Utility functions

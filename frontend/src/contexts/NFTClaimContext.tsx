@@ -1,15 +1,16 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, ReactNode, useCallback, useState } from 'react';
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
-import { Aptos, AptosConfig, Network } from '@aptos-labs/ts-sdk';
-import { ClaimableNFT, NFTClaim, ClaimResult } from '@/types';
+import { useNotification } from '@/contexts/NotificationContext';
+// import { toast } from 'react-hot-toast';
+import { aptos, MODULE_ADDRESS, Q3P_TOKEN_MODULE, NFT_MODULE } from '@/lib/aptos';
+import { usePoints } from './PointsContext';
+import { ClaimableNFT, ClaimResult } from '@/types';
 
 interface NFTClaimContextType {
   claimableNFTs: ClaimableNFT[];
-  userNFTs: NFTClaim[];
   claimNFT: (nftId: string) => Promise<ClaimResult>;
-  getClaimableNFTs: (userPoints: number) => ClaimableNFT[];
+  getClaimableNFTs: (totalPoints: number) => ClaimableNFT[];
   isLoading: boolean;
-  error: string | null;
 }
 
 const NFTClaimContext = createContext<NFTClaimContextType | undefined>(undefined);
@@ -19,7 +20,7 @@ const NFT_COLLECTION: ClaimableNFT[] = [
   {
     id: 'aptos-bronze',
     name: 'Aptos Bronze Explorer',
-    description: 'A bronze badge for completing your first Aptos quiz with 3000+ points',
+    description: 'A bronze badge for completing your first Aptos quiz with 3000+ Q3P',
     imageUrl: '/nfts/aptos-bronze.svg',
     requiredPoints: 3000,
     rarity: 'common',
@@ -30,7 +31,7 @@ const NFT_COLLECTION: ClaimableNFT[] = [
   {
     id: 'aptos-gold',
     name: 'Aptos Gold Master',
-    description: 'A gold badge for mastering Aptos with 5000+ points',
+    description: 'A gold badge for mastering Aptos with 5000+ Q3P',
     imageUrl: '/nfts/aptos-gold.svg',
     requiredPoints: 5000,
     rarity: 'rare',
@@ -41,7 +42,7 @@ const NFT_COLLECTION: ClaimableNFT[] = [
   {
     id: 'defi-bronze',
     name: 'DeFi Bronze Trader',
-    description: 'A bronze badge for completing your first DeFi quiz with 3000+ points',
+    description: 'A bronze badge for completing your first DeFi quiz with 3000+ Q3P',
     imageUrl: '/nfts/defi-bronze.svg',
     requiredPoints: 3000,
     rarity: 'common',
@@ -52,7 +53,7 @@ const NFT_COLLECTION: ClaimableNFT[] = [
   {
     id: 'defi-gold',
     name: 'DeFi Gold Master',
-    description: 'A gold badge for mastering DeFi with 5000+ points',
+    description: 'A gold badge for mastering DeFi with 5000+ Q3P',
     imageUrl: '/nfts/defi-gold.svg',
     requiredPoints: 5000,
     rarity: 'rare',
@@ -63,7 +64,7 @@ const NFT_COLLECTION: ClaimableNFT[] = [
   {
     id: 'nft-bronze',
     name: 'NFT Bronze Collector',
-    description: 'A bronze badge for completing your first NFT quiz with 3000+ points',
+    description: 'A bronze badge for completing your first NFT quiz with 3000+ Q3P',
     imageUrl: '/nfts/nft-bronze.svg',
     requiredPoints: 3000,
     rarity: 'common',
@@ -74,7 +75,7 @@ const NFT_COLLECTION: ClaimableNFT[] = [
   {
     id: 'nft-gold',
     name: 'NFT Gold Master',
-    description: 'A gold badge for mastering NFTs with 5000+ points',
+    description: 'A gold badge for mastering NFTs with 5000+ Q3P',
     imageUrl: '/nfts/nft-gold.svg',
     requiredPoints: 5000,
     rarity: 'rare',
@@ -85,7 +86,7 @@ const NFT_COLLECTION: ClaimableNFT[] = [
   {
     id: 'zk-bronze',
     name: 'ZK Bronze Explorer',
-    description: 'A bronze badge for completing your first ZK quiz with 3000+ points',
+    description: 'A bronze badge for completing your first ZK quiz with 3000+ Q3P',
     imageUrl: '/nfts/zk-bronze.svg',
     requiredPoints: 3000,
     rarity: 'common',
@@ -96,7 +97,7 @@ const NFT_COLLECTION: ClaimableNFT[] = [
   {
     id: 'zk-gold',
     name: 'ZK Gold Master',
-    description: 'A gold badge for mastering ZK with 5000+ points',
+    description: 'A gold badge for mastering ZK with 5000+ Q3P',
     imageUrl: '/nfts/zk-gold.svg',
     requiredPoints: 5000,
     rarity: 'rare',
@@ -106,170 +107,97 @@ const NFT_COLLECTION: ClaimableNFT[] = [
   },
 ];
 
-export function NFTClaimProvider({ children }: { children: ReactNode }) {
+export const useNFTClaim = () => {
+  const context = useContext(NFTClaimContext);
+  if (!context) throw new Error('useNFTClaim must be used within a NFTClaimProvider');
+  return context;
+};
+
+export const NFTClaimProvider = ({ children }: { children: ReactNode }) => {
   const { account, signAndSubmitTransaction } = useWallet();
-  const [userNFTs, setUserNFTs] = useState<NFTClaim[]>([]);
+  const { getTotalEarnedQ3P } = usePoints();
+  const { showNotification } = useNotification();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  // Aptos SDK configuration
-  const config = new AptosConfig({ network: Network.TESTNET });
-  const aptos = new Aptos(config);
-
-  // Load user NFTs from localStorage
-  useEffect(() => {
-    const savedNFTs = localStorage.getItem('quiz3_user_nfts');
-    if (savedNFTs) {
-      try {
-        const parsedNFTs = JSON.parse(savedNFTs);
-        setUserNFTs(parsedNFTs);
-      } catch (err) {
-        console.error('Error loading user NFTs:', err);
-      }
-    }
+  const getClaimableNFTs = useCallback((totalPoints: number): ClaimableNFT[] => {
+    return NFT_COLLECTION.map(nft => ({
+      ...nft,
+      isClaimable: totalPoints >= nft.requiredPoints,
+    }));
   }, []);
 
-  // Save user NFTs to localStorage
-  useEffect(() => {
-    if (userNFTs.length > 0) {
-      localStorage.setItem('quiz3_user_nfts', JSON.stringify(userNFTs));
-    }
-  }, [userNFTs]);
+  const claimNFT = useCallback(async (nftId: string): Promise<ClaimResult> => {
+    if (!account?.address) return { success: false, error: 'Wallet not connected' };
 
-  const getClaimableNFTs = (userPoints: number): ClaimableNFT[] => {
-    return NFT_COLLECTION.map(nft => {
-      const isClaimable = userPoints >= nft.requiredPoints;
-      const isClaimed = userNFTs.some(userNFT => userNFT.id === nft.id);
-      
-      return {
-        ...nft,
-        isClaimable: isClaimable && !isClaimed,
-        isClaimed,
-      };
-    });
-  };
+    const nftToClaim = NFT_COLLECTION.find(nft => nft.id === nftId);
+    if (!nftToClaim) return { success: false, error: 'NFT not found' };
 
-  const claimNFT = async (nftId: string): Promise<ClaimResult> => {
-    if (!account || !signAndSubmitTransaction) {
-      return {
-        success: false,
-        error: 'Wallet not connected',
-      };
+    const totalEarnedQ3P = getTotalEarnedQ3P();
+
+    // 1. Check local Q3P instead of on-chain Q3P balance for the demo
+    if (totalEarnedQ3P < nftToClaim.requiredPoints) {
+      return { success: false, error: `Not enough Q3P. You need ${nftToClaim.requiredPoints}.` };
     }
 
     setIsLoading(true);
-    setError(null);
 
     try {
-      // Find the NFT to claim
-      const nftToClaim = NFT_COLLECTION.find(nft => nft.id === nftId);
-      if (!nftToClaim) {
-        throw new Error('NFT not found');
-      }
-
-      // Check if already claimed
-      const alreadyClaimed = userNFTs.some(nft => nft.id === nftId);
-      if (alreadyClaimed) {
-        throw new Error('NFT already claimed');
-      }
-
-      // Get current user points for logging
-      const userPoints = JSON.parse(localStorage.getItem('quiz3_user_points') || '{"totalPoints": 0}').totalPoints;
-
-      // Create NFT using Aptos Coin Transfer - Real Testnet Blockchain Transaction
-      // For hackathon demo, we'll use a simple coin transfer to show real blockchain interaction
-      console.log('🚀 Starting NFT claim transaction on TESTNET...');
-      console.log('User address:', account.address);
-      console.log('Network:', 'TESTNET');
-      console.log('NFT to claim:', nftToClaim.name);
-      console.log('Required points:', nftToClaim.requiredPoints);
-      console.log('Current user points:', userPoints);
-      console.log('Aptos config network:', aptos.config.network);
-      
-      const transactionPayload = {
-        function: "0x1::aptos_account::transfer" as `${string}::${string}::${string}`,
-        typeArguments: [],
-        functionArguments: [
-          account.address, // to (self-transfer for demo on testnet)
-          "100", // amount (0.000001 APT - very small amount for testnet)
-        ],
-      };
-
-      // Sign and submit transaction to real blockchain
-      const response = await signAndSubmitTransaction({
+      // 2. Burn the required Q3P tokens
+      const burnResult = await signAndSubmitTransaction({
         data: {
-          function: transactionPayload.function,
-          typeArguments: transactionPayload.typeArguments,
-          functionArguments: transactionPayload.functionArguments,
+          function: `${MODULE_ADDRESS}::${Q3P_TOKEN_MODULE}::burn` as const,
+          functionArguments: [nftToClaim.requiredPoints.toString()],
         },
       });
+      await aptos.waitForTransaction({ transactionHash: burnResult.hash });
       
-      // Wait for transaction confirmation on blockchain
-      const result = await aptos.waitForTransaction({
-        transactionHash: response.hash,
-      });
+      showNotification(`Successfully burned ${nftToClaim.requiredPoints} Q3P!`, 'success');
 
-      if (result.success) {
-        console.log('✅ TESTNET transaction successful!');
-        console.log('Transaction hash:', response.hash);
-        console.log('Explorer URL:', `https://explorer.aptoslabs.com/txn/${response.hash}?network=testnet`);
-        
-        // Add NFT to user's collection
-        const newNFT: NFTClaim = {
-          ...nftToClaim,
-          claimed: true,
-          claimDate: new Date(),
-          transactionHash: response.hash,
+      // 3. Mint the NFT via a backend service
+
+      try {
+        // In a real application, this request would be sent to a secure backend
+        // that holds the admin key to call the `mint_nft` function.
+        // Mint NFT directly using the contract
+        const mintPayload = {
+          function: `${MODULE_ADDRESS}::${NFT_MODULE}::mint_nft` as const,
+          functionArguments: [
+            nftToClaim.name,
+            nftToClaim.description,
+            new URL(nftToClaim.imageUrl, window.location.origin).href,
+          ],
         };
 
-        setUserNFTs(prev => [...prev, newNFT]);
+        const mintResult = await signAndSubmitTransaction({
+          data: mintPayload,
+        });
+        await aptos.waitForTransaction({ transactionHash: mintResult.hash });
 
-        return {
-          success: true,
-          transactionHash: response.hash,
-          nftId: nftId,
-        };
-      } else {
-        throw new Error('TESTNET blockchain transaction failed');
+        console.log(`NFT minted successfully! Hash: ${mintResult.hash}`);
+        showNotification(`NFT minted successfully! Transaction Hash: ${mintResult.hash}\n\nView on Explorer: https://explorer.aptoslabs.com/txn/${mintResult.hash}?network=testnet`, 'success');
+
+        return { success: true, transactionHash: mintResult.hash };
+
+      } catch (error: any) {
+        console.error('NFT minting failed', error);
+        showNotification(`Minting failed: ${error.message || 'An unknown error occurred.'}`, 'error');
+        // NOTE: In a production app, a failure here should trigger a process
+        // to refund the user's burned Q3P tokens.
+        return { success: false, error: error.message };
       }
 
-    } catch (err) {
-      console.error('❌ TESTNET NFT claim error:', err);
-      console.log('Make sure you have testnet APT in your wallet!');
-      console.log('Get testnet APT from: https://aptos.dev/network/faucet');
-      
-      const errorMessage = err instanceof Error ? err.message : 'Failed to claim NFT on TESTNET. Make sure you have testnet APT!';
-      setError(errorMessage);
-      
-      return {
-        success: false,
-        error: errorMessage,
-      };
+    } catch (error: any) {
+      console.error('NFT claim process failed', error);
+      showNotification(`Claim failed: ${error.message || 'Please try again.'}`, 'error');
+      return { success: false, error: error.message };
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const value: NFTClaimContextType = {
-    claimableNFTs: NFT_COLLECTION,
-    userNFTs,
-    claimNFT,
-    getClaimableNFTs,
-    isLoading,
-    error,
-  };
+  }, [account?.address, signAndSubmitTransaction, getTotalEarnedQ3P, showNotification]);
 
   return (
-    <NFTClaimContext.Provider value={value}>
+    <NFTClaimContext.Provider value={{ claimableNFTs: NFT_COLLECTION, claimNFT, getClaimableNFTs, isLoading }}>
       {children}
     </NFTClaimContext.Provider>
   );
-}
-
-export function useNFTClaim() {
-  const context = useContext(NFTClaimContext);
-  if (context === undefined) {
-    throw new Error('useNFTClaim must be used within a NFTClaimProvider');
-  }
-  return context;
-}
+};

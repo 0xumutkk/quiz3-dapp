@@ -1,162 +1,201 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { UserPoints, PointsTransaction, Category } from '@/types';
+import { Category } from '@/types';
 
-interface PointsContextType {
-  userPoints: UserPoints;
-  addPoints: (category: Category, points: number, source?: 'quiz' | 'bonus' | 'claim' | 'article') => void;
-  collectAllPoints: () => void;
-  resetPoints: () => void;
-  getTotalPoints: () => number;
-  getCategoryPoints: (category: Category) => number;
+interface Q3PContextType {
+  earnedQ3P: number; // Quiz sonrası kazanılan ama henüz claim edilmemiş Q3P
+  claimedQ3P: number; // Claim edilmiş Q3P
+  addEarnedQ3P: (q3pAmount: number, category: Category) => void;
+  claimEarnedQ3P: () => Promise<boolean>;
+  resetEarnedQ3P: () => void;
+  getTotalEarnedQ3P: () => number;
+  getClaimedQ3P: () => number;
+  getNFTThreshold: () => number; // NFT claim için gereken Q3P miktarı
 }
 
-const PointsContext = createContext<PointsContextType | undefined>(undefined);
+const Q3PContext = createContext<Q3PContextType | undefined>(undefined);
 
-const STORAGE_KEY = 'quiz3_user_points';
-const TRANSACTIONS_KEY = 'quiz3_points_transactions';
+const EARNED_Q3P_KEY = 'quiz3_earned_q3p';
+const CLAIMED_Q3P_KEY = 'quiz3_claimed_q3p';
+const NFT_THRESHOLD = 3000; // NFT claim için gereken Q3P miktarı
 
-const initialPoints: UserPoints = {
-  totalPoints: 0,
-  categoryPoints: {
-    aptos: 0,
-    defi: 0,
-    nft: 0,
-    zk: 0,
-  },
-  lastUpdated: new Date(),
-};
+interface EarnedQ3PData {
+  amount: number;
+  category: Category;
+  timestamp: Date;
+  quizSessionId: string;
+}
 
-// Seed some test points (in development mode)
-const isDevelopment = import.meta.env.DEV;
-const testPoints: UserPoints = {
-  totalPoints: 3200, // 3000+ points to test NFT claim
-  categoryPoints: {
-    aptos: 1200,
-    defi: 800,
-    nft: 700,
-    zk: 500,
-  },
-  lastUpdated: new Date(),
-};
+export function Q3PProvider({ children }: { children: ReactNode }) {
+  const [earnedQ3P, setEarnedQ3P] = useState<number>(0);
+  const [claimedQ3P, setClaimedQ3P] = useState<number>(0);
+  const [earnedSessions, setEarnedSessions] = useState<EarnedQ3PData[]>([]);
 
-export function PointsProvider({ children }: { children: ReactNode }) {
-  const [userPoints, setUserPoints] = useState<UserPoints>(initialPoints);
-  const [transactions, setTransactions] = useState<PointsTransaction[]>([]);
-
-  // Load points from localStorage on mount
+  // Load data from localStorage on mount
   useEffect(() => {
-    const savedPoints = localStorage.getItem(STORAGE_KEY);
-    const savedTransactions = localStorage.getItem(TRANSACTIONS_KEY);
-    
-    if (savedPoints) {
+    const savedEarned = localStorage.getItem(EARNED_Q3P_KEY);
+    const savedClaimed = localStorage.getItem(CLAIMED_Q3P_KEY);
+
+    if (savedEarned) {
       try {
-        const parsed = JSON.parse(savedPoints);
-        setUserPoints({
-          ...parsed,
-          lastUpdated: new Date(parsed.lastUpdated),
-        });
-      } catch (error) {
-        console.error('Error loading points from localStorage:', error);
-      }
-    } else if (isDevelopment) {
-      // Use test points in development mode
-      setUserPoints(testPoints);
-    }
-    
-    if (savedTransactions) {
-      try {
-        const parsed = JSON.parse(savedTransactions);
-        setTransactions(parsed.map((t: any) => ({
-          ...t,
-          timestamp: new Date(t.timestamp),
+        const parsed = JSON.parse(savedEarned);
+        const totalEarned = parsed.reduce((sum: number, item: EarnedQ3PData) => sum + item.amount, 0);
+        setEarnedQ3P(totalEarned);
+        setEarnedSessions(parsed.map((item: any) => ({
+          ...item,
+          timestamp: new Date(item.timestamp),
         })));
       } catch (error) {
-        console.error('Error loading transactions from localStorage:', error);
+        console.error('Error loading earned Q3P from localStorage:', error);
       }
+    }
+
+    if (savedClaimed) {
+      try {
+        const parsed = parseInt(savedClaimed, 10);
+        setClaimedQ3P(parsed);
+      } catch (error) {
+        console.error('Error loading claimed Q3P from localStorage:', error);
+      }
+    }
+
+    // Development mode test data
+    if (import.meta.env.DEV && !savedEarned && !savedClaimed) {
+      const testEarnedQ3P = 3200;
+      setEarnedQ3P(testEarnedQ3P);
+      setEarnedSessions([{
+        amount: testEarnedQ3P,
+        category: 'aptos',
+        timestamp: new Date(),
+        quizSessionId: 'test_session'
+      }]);
+      localStorage.setItem(EARNED_Q3P_KEY, JSON.stringify([{
+        amount: testEarnedQ3P,
+        category: 'aptos',
+        timestamp: new Date(),
+        quizSessionId: 'test_session'
+      }]));
     }
   }, []);
 
-  // Save points to localStorage whenever they change
+  // Save earned Q3P to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(userPoints));
-  }, [userPoints]);
+    localStorage.setItem(EARNED_Q3P_KEY, JSON.stringify(earnedSessions));
+  }, [earnedSessions]);
 
-  // Save transactions to localStorage whenever they change
+  // Save claimed Q3P to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(transactions));
-  }, [transactions]);
+    localStorage.setItem(CLAIMED_Q3P_KEY, claimedQ3P.toString());
+  }, [claimedQ3P]);
 
-  const addPoints = (category: Category, points: number, source: 'quiz' | 'bonus' | 'claim' | 'article' = 'quiz') => {
-    setUserPoints(prev => {
-      const newCategoryPoints = prev.categoryPoints[category] + points;
-      const newTotalPoints = prev.totalPoints + points;
-      
-      return {
-        totalPoints: newTotalPoints,
-        categoryPoints: {
-          ...prev.categoryPoints,
-          [category]: newCategoryPoints,
-        },
-        lastUpdated: new Date(),
-      };
-    });
+  const addEarnedQ3P = (q3pAmount: number, category: Category) => {
+    const quizSessionId = `quiz_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    // Add transaction record
-    const newTransaction: PointsTransaction = {
-      id: `tx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    const newEarnedData: EarnedQ3PData = {
+      amount: q3pAmount,
       category,
-      points,
       timestamp: new Date(),
-      source,
+      quizSessionId,
     };
 
-    setTransactions(prev => [...prev, newTransaction]);
+    setEarnedSessions(prev => [...prev, newEarnedData]);
+    setEarnedQ3P(prev => prev + q3pAmount);
   };
 
-  const collectAllPoints = () => {
-    // This function can be used to "collect" all pending points
-    // For now, it just updates the lastUpdated timestamp
-    setUserPoints(prev => ({
-      ...prev,
-      lastUpdated: new Date(),
-    }));
+  const claimEarnedQ3P = async (): Promise<boolean> => {
+    if (earnedQ3P === 0) return false;
+
+    try {
+      // For now, just simulate the claim until contract is deployed
+      console.log(`Claiming ${earnedQ3P} Q3P tokens...`);
+
+      // TODO: Replace with actual blockchain call when contract is deployed
+      // const { claimEarnedPoints } = useToken();
+      // await claimEarnedPoints(earnedQ3P);
+
+      setClaimedQ3P(prev => prev + earnedQ3P);
+      setEarnedQ3P(0);
+      setEarnedSessions([]);
+
+      return true;
+    } catch (error) {
+      console.error('Failed to claim Q3P:', error);
+      return false;
+    }
   };
 
-  const resetPoints = () => {
-    setUserPoints(initialPoints);
-    setTransactions([]);
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(TRANSACTIONS_KEY);
+  const resetEarnedQ3P = () => {
+    setEarnedQ3P(0);
+    setEarnedSessions([]);
+    localStorage.removeItem(EARNED_Q3P_KEY);
   };
 
-  const getTotalPoints = () => {
-    return userPoints.totalPoints;
+  const getTotalEarnedQ3P = () => {
+    return earnedQ3P;
   };
 
-  const getCategoryPoints = (category: Category) => {
-    return userPoints.categoryPoints[category];
+  const getClaimedQ3P = () => {
+    return claimedQ3P;
   };
 
-  const value: PointsContextType = {
-    userPoints,
-    addPoints,
-    collectAllPoints,
-    resetPoints,
-    getTotalPoints,
-    getCategoryPoints,
+  const getNFTThreshold = () => {
+    return NFT_THRESHOLD;
+  };
+
+  const value: Q3PContextType = {
+    earnedQ3P,
+    claimedQ3P,
+    addEarnedQ3P,
+    claimEarnedQ3P,
+    resetEarnedQ3P,
+    getTotalEarnedQ3P,
+    getClaimedQ3P,
+    getNFTThreshold,
   };
 
   return (
-    <PointsContext.Provider value={value}>
+    <Q3PContext.Provider value={value}>
       {children}
-    </PointsContext.Provider>
+    </Q3PContext.Provider>
   );
 }
 
-export function usePoints() {
-  const context = useContext(PointsContext);
+export function useQ3P() {
+  const context = useContext(Q3PContext);
   if (context === undefined) {
-    throw new Error('usePoints must be used within a PointsProvider');
+    throw new Error('useQ3P must be used within a Q3PProvider');
   }
   return context;
+}
+
+// Legacy PointsProvider for backward compatibility
+export function PointsProvider({ children }: { children: ReactNode }) {
+  return <Q3PProvider>{children}</Q3PProvider>;
+}
+
+export function usePoints() {
+  const q3pContext = useQ3P();
+  return {
+    // Legacy compatibility
+    userPoints: {
+      totalPoints: q3pContext.earnedQ3P,
+      categoryPoints: {
+        aptos: 0,
+        defi: 0,
+        nft: 0,
+        zk: 0,
+      },
+      lastUpdated: new Date(),
+    },
+    addPoints: (category: Category, points: number) => q3pContext.addEarnedQ3P(points, category),
+    collectAllPoints: () => {},
+    resetPoints: () => q3pContext.resetEarnedQ3P(),
+    getTotalPoints: () => q3pContext.getTotalEarnedQ3P(),
+    getCategoryPoints: () => 0,
+    // New Q3P functions
+    earnedQ3P: q3pContext.earnedQ3P,
+    claimedQ3P: q3pContext.claimedQ3P,
+    claimEarnedQ3P: q3pContext.claimEarnedQ3P,
+    getTotalEarnedQ3P: q3pContext.getTotalEarnedQ3P,
+    getNFTThreshold: q3pContext.getNFTThreshold,
+  };
 }

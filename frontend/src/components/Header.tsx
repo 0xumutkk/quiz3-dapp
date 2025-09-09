@@ -1,105 +1,50 @@
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, Trophy } from 'lucide-react';
 import { WalletButton } from './WalletButton';
-import { usePoints } from '@/contexts/PointsContext';
-import { getSeasonDates } from '@/lib/utils';
+import { useWallet } from '@aptos-labs/wallet-adapter-react';
+import { useToken } from '@/contexts/TokenContext';
 
 export function Header() {
-  const [timeLeft, setTimeLeft] = useState<string>('');
   const navigate = useNavigate();
-  const { getTotalPoints } = usePoints();
+  const { connected } = useWallet();
+  const { balance: q3pBalance } = useToken();
 
-  useEffect(() => {
-    const updateCountdown = () => {
-      const { end } = getSeasonDates();
-      const now = new Date().getTime();
-      const distance = end.getTime() - now;
-
-      if (distance > 0) {
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        if (days > 0) {
-          setTimeLeft(`${days}d ${hours}h ${minutes}m`);
-        } else if (hours > 0) {
-          setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
-        } else {
-          setTimeLeft(`${minutes}m ${seconds}s`);
-        }
-      } else {
-        setTimeLeft('Season Ended');
-      }
-    };
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
+  const handleLogoClick = () => {
+    navigate('/');
+  };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-xl header-mobile-responsive">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+    <header className="sticky top-0 z-50 bg-slate-900/50 backdrop-blur-lg border-b border-slate-800">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         {/* Logo */}
-        <div className="flex items-center gap-3">
-          <div 
-            className="relative cursor-pointer hover:opacity-80 transition-opacity"
-            onClick={() => navigate('/')}
-          >
-            <img src="/logo.svg" alt="Quiz3" className="h-10 w-auto header-logo-mobile-responsive" />
-          </div>
+        <div 
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={handleLogoClick}
+        >
+          <img src="/logo.svg" alt="Quiz3 Logo" className=" w-24" />
         </div>
 
-        {/* Center Section - Season Countdown and Points */}
-        <div className="hidden sm:flex items-center gap-4">
-          {/* Season Countdown */}
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/50 border border-slate-700/50">
-            <Clock className="h-4 w-4 text-trivia-blue" />
-            <div className="text-sm">
-              <div className="text-xs text-slate-400">Season Ends In</div>
-              <div className="font-mono font-medium text-trivia-blue">
-                {timeLeft}
+        {/* Q3P Balance and Wallet Button */}
+        <div className="flex items-center gap-4">
+          {connected && (
+            <div className="hidden sm:flex items-center gap-4">
+              <div className="flex items-center gap-2 px-3 py-2 bg-slate-800/70 rounded-md border border-slate-700">
+                <span className="text-sm text-slate-400">Q3P:</span>
+                <span className="font-bold text-trivia-cyan">{q3pBalance !== null ? q3pBalance.toLocaleString() : '...'}</span>
               </div>
             </div>
-          </div>
-
-          {/* Total Points */}
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-trivia-orange/20 to-trivia-cyan/20 border border-trivia-orange/30">
-            <Trophy className="h-4 w-4 text-trivia-orange" />
-            <div className="text-sm">
-              <div className="text-xs text-slate-400">Total Points</div>
-              <div className="font-mono font-medium text-trivia-orange">
-                {getTotalPoints().toLocaleString()}
-              </div>
-            </div>
-          </div>
+          )}
+          <WalletButton />
         </div>
-
-        {/* Mobile Display */}
-        <div className="sm:hidden flex items-center gap-2">
-          {/* Mobile Points */}
-          <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-gradient-to-r from-trivia-orange/20 to-trivia-cyan/20 border border-trivia-orange/30">
-            <Trophy className="h-3 w-3 text-trivia-orange" />
-            <span className="text-xs font-mono text-trivia-orange">
-              {getTotalPoints().toLocaleString()}
-            </span>
-          </div>
-          
-          {/* Mobile Season Display */}
-          <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-800/50 header-countdown-mobile-responsive">
-            <Clock className="h-3 w-3 text-trivia-blue" />
-            <span className="text-xs font-mono text-trivia-blue">
-              {timeLeft}
-            </span>
-          </div>
-        </div>
-
-        {/* Wallet Connection */}
-        <WalletButton />
       </div>
+      {/* Mobile Q3P Display */}
+      {connected && (
+        <div className="sm:hidden pb-3 px-4 flex justify-center items-center gap-4 border-t border-slate-800 mt-2 pt-2">
+            <div className="flex items-center gap-2 px-3 py-1 bg-slate-800/70 rounded-md border border-slate-700">
+              <span className="text-xs text-slate-400">Q3P:</span>
+              <span className="font-semibold text-sm text-trivia-cyan">{q3pBalance !== null ? q3pBalance.toLocaleString() : '...'}</span>
+            </div>
+        </div>
+      )}
     </header>
   );
 }
