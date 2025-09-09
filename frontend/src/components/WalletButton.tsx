@@ -47,7 +47,7 @@ export function WalletButton() {
 
   const handleCopyAddress = async () => {
     if (account?.address) {
-      await navigator.clipboard.writeText(account.address);
+      await navigator.clipboard.writeText(account.address.toString());
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
-import { Trophy, Zap, Coins, Palette, Shield, TrendingUp, BookOpen, Clock, Target } from 'lucide-react';
+import { Trophy, Zap, Coins, Palette, Shield, BookOpen, Clock, Target } from 'lucide-react';
 import { CategoryCard } from '@/components/CategoryCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -269,32 +269,6 @@ export function HomePage() {
         </Card>
       )}
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="text-center">
-          <CardContent className="p-6">
-            <TrendingUp className="h-8 w-8 text-trivia-blue mx-auto mb-3" />
-            <div className="text-3xl font-display text-white mb-2">1,247</div>
-            <div className="text-sm font-caption text-slate-400">Active Players</div>
-          </CardContent>
-        </Card>
-        
-        <Card className="text-center">
-          <CardContent className="p-6">
-            <Trophy className="h-8 w-8 text-trivia-cyan mx-auto mb-3" />
-            <div className="text-3xl font-display text-white mb-2">8,932</div>
-            <div className="text-sm font-caption text-slate-400">Games Played</div>
-          </CardContent>
-        </Card>
-        
-        <Card className="text-center">
-          <CardContent className="p-6">
-            <Coins className="h-8 w-8 text-trivia-orange mx-auto mb-3" />
-            <div className="text-3xl font-display text-white mb-2">5,000</div>
-            <div className="text-sm font-caption text-slate-400">APT Rewards Pool</div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Category Selection */}
       <div className="space-y-6">
@@ -508,6 +482,29 @@ export function HomePage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Small Stats Section - Less Prominent */}
+      <div className="mt-12 pt-8 border-t border-white/10">
+        <div className="text-center mb-6">
+          <h3 className="text-lg font-semibold text-slate-300 mb-2">Platform Statistics</h3>
+          <p className="text-sm text-slate-500">Live data from Quiz3 community</p>
+        </div>
+        
+        <div className="grid grid-cols-3 gap-4 max-w-md mx-auto">
+          <div className="text-center">
+            <div className="text-xl font-semibold text-slate-300">1,247</div>
+            <div className="text-xs text-slate-500">Active Players</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-semibold text-slate-300">8,932</div>
+            <div className="text-xs text-slate-500">Games Played</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-semibold text-slate-300">5,000</div>
+            <div className="text-xs text-slate-500">Q3P Pool</div>
+          </div>
+        </div>
+      </div>
 
       {/* NFT Claim Modal */}
       <NFTClaimModal

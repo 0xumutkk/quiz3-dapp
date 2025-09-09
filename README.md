@@ -72,9 +72,11 @@ Quiz3 is a cutting-edge Web3 trivia application that combines education with gam
 ### ⛓️ Blockchain Integration
 - **Aptos Testnet**: Smart contract deployment
 - **Wallet Connection**: Aptos Wallet Adapter integration
+- **Q3P Token System**: Custom ERC-20-like token for quiz rewards
 - **Season Management**: On-chain merkle root verification
-- **Reward Claims**: Secure APT token distribution
+- **Reward Claims**: Secure Q3P token distribution
 - **Merkle Trees**: Off-chain calculation, on-chain verification
+- **NFT Rewards**: Category-specific achievement NFTs
 
 ## 🪙 NFT Rewards & Claim (Testnet)
 
@@ -109,6 +111,75 @@ NFT claim flow (summary):
 Assets:
 - SVGs for each category/rarity live at `frontend/public/nfts/*` (e.g., `aptos-bronze.svg`, `defi-gold.svg`, etc.).
 
+## 🧪 Merkle Root Verification System
+
+### ✅ Test Status: PASSED
+
+The merkle root verification system has been successfully implemented and tested on Aptos testnet.
+
+**Deployed Contract:**
+- **Module Address**: `0x9cc9a9afd4c0466f5bcdba723c02d35b7f771ed880ca75e6addb9432c77b5af9`
+- **Deploy Transaction**: [View on Explorer](https://explorer.aptoslabs.com/txn/0xfd61a00ab6c9405b8b5fc27e5aa47fdc0fb3e4bb3f891671745dedb5b8711c24?network=testnet)
+
+### 🔧 Available Functions
+
+- ✅ `set_season_merkle_root(season, root)` - Admin sets merkle root for a season
+- ✅ `get_season_merkle_root(season)` - Retrieves merkle root for a season  
+- ✅ `claim_rewards(season, amount, proof)` - User claims rewards with merkle proof
+- ✅ `has_user_claimed(user, season)` - Checks if user has claimed for a season
+
+### 🚀 Quick Test
+
+```bash
+# Run simple test
+./test-simple.sh
+
+# Run detailed test
+./test-merkle-terminal.sh
+```
+
+### 📊 Test Results
+
+- ✅ **Contract Deploy**: SUCCESS
+- ✅ **Merkle Root Set**: SUCCESS (434 gas used)
+- ✅ **Merkle Root Get**: SUCCESS
+- ✅ **Function Availability**: All functions accessible
+
+### 🎯 System Features
+
+- **On-chain Verification**: Merkle proofs verified on blockchain
+- **Double Claim Protection**: Users cannot claim twice for same season
+- **Admin Control**: Only admin can set merkle roots
+- **Gas Efficient**: Only root hash stored on-chain
+- **Secure**: Cryptographic proof verification
+
+---
+
+## 🪙 Q3P Token System
+
+### Token Overview
+- **Name**: Quiz3 Point Token
+- **Symbol**: Q3P
+- **Decimals**: 8
+- **Type**: Aptos Coin (ERC-20-like)
+- **Network**: Aptos Testnet
+
+### Token Functions
+- ✅ `mint(recipient, amount)` - Admin mints tokens to users
+- ✅ `burn(user, amount)` - Users burn their tokens
+- ✅ `claim_points(user)` - Users claim 100 Q3P (demo)
+- ✅ `claim_earned_points(user, amount)` - Users claim earned rewards
+- ✅ `get_balance(owner)` - View user's Q3P balance
+- ✅ `register(account)` - Register for Q3P token
+
+### Earning Mechanisms
+- **Quiz Performance**: Points converted to Q3P tokens
+- **Article Reading**: +200 Q3P per article (one-time)
+- **Achievement NFTs**: Burn Q3P to mint category NFTs
+- **Season Rewards**: Merkle proof-based Q3P distribution
+
+---
+
 ## 🧠 Earning Points
 
 - **Quizzes**: Points are awarded upon completion based on performance.
@@ -128,6 +199,9 @@ Assets:
 
 ### Smart Contract
 - **Move Language**: Resource-oriented programming
+- **Q3P Token Module**: Custom token with mint/burn capabilities
+- **Quiz Module**: Merkle root verification and reward claims
+- **NFT Module**: Achievement NFT minting system
 - **Season Management**: Create and manage quiz seasons
 - **Merkle Proofs**: Secure reward distribution
 - **Anti-Double-Claim**: Built-in protection mechanisms
@@ -227,7 +301,9 @@ quiz3-dapp/
 │   └── package.json
 ├── contract/                # Move smart contract
 │   ├── sources/
-│   │   └── trivia_game.move # Main contract logic
+│   │   ├── q3p_token.move   # Q3P token implementation
+│   │   ├── quiz.move        # Merkle root verification system
+│   │   └── nft.move         # NFT minting system
 │   └── Move.toml
 ├── .gitignore
 └── README.md
@@ -292,9 +368,14 @@ npm run preview      # Preview production build
 npm run lint         # Run ESLint
 
 # Smart Contract
-npm run move:compile # Compile Move contract
-npm run move:test    # Run Move tests
-npm run move:publish # Deploy to testnet
+cd contract
+aptos move compile   # Compile Move contracts
+aptos move test      # Run Move tests
+aptos move publish --profile testnet  # Deploy to testnet
+
+# Merkle Root Testing
+./test-simple.sh              # Quick merkle root test
+./test-merkle-terminal.sh     # Detailed merkle root test
 ```
 
 ---

@@ -29,13 +29,12 @@ export async function claimRewards(
     const transaction = await aptosClient.transaction.build.simple({
       sender: userAccount.address,
       data: {
-        function: `${moduleAddress}::quiz3::claim_rewards`,
+        function: `${moduleAddress}::quiz::claim_rewards`,
         typeArguments: [],
         functionArguments: [
           claimParams.season.toString(),
           claimParams.amount,
           claimParams.merkleProof,
-          claimParams.merkleRoot,
         ],
       },
     });
@@ -76,7 +75,7 @@ export async function setSeasonMerkleRoot(
     const transaction = await aptosClient.transaction.build.simple({
       sender: adminAccount.address,
       data: {
-        function: `${moduleAddress}::quiz3::set_season_root`,
+        function: `${moduleAddress}::quiz::set_season_merkle_root`,
         typeArguments: [],
         functionArguments: [season.toString(), merkleRoot],
       },

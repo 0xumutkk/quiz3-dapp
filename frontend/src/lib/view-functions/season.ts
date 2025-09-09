@@ -94,7 +94,7 @@ export async function getSeasonMerkleRoot(season: number): Promise<string | null
 
     const result = await aptosClient.view({
       payload: {
-        function: `${moduleAddress}::quiz3::get_season_merkle_root`,
+        function: `${moduleAddress}::quiz::get_season_merkle_root`,
         functionArguments: [season.toString()],
       },
     });
@@ -107,6 +107,34 @@ export async function getSeasonMerkleRoot(season: number): Promise<string | null
   } catch (error) {
     console.error('Error fetching season merkle root:', error);
     return null;
+  }
+}
+
+/**
+ * Check if user has claimed rewards for a specific season
+ */
+export async function hasUserClaimed(userAddress: string, season: number): Promise<boolean> {
+  try {
+    const moduleAddress = import.meta.env.VITE_MODULE_ADDRESS;
+    if (!moduleAddress) {
+      throw new Error('Module address not configured');
+    }
+
+    const result = await aptosClient.view({
+      payload: {
+        function: `${moduleAddress}::quiz::has_user_claimed`,
+        functionArguments: [userAddress, season.toString()],
+      },
+    });
+    
+    if (result && result.length > 0) {
+      return result[0] as boolean;
+    }
+    
+    return false;
+  } catch (error) {
+    console.error('Error checking user claim status:', error);
+    return false;
   }
 }
 

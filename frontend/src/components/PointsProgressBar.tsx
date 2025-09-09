@@ -67,29 +67,33 @@ export function PointsProgressBar({
             </div>
 
             {/* Progress Bar */}
-            <div className="relative">
-              <div className="h-3 bg-slate-700 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-trivia-orange to-trivia-cyan rounded-full transition-all duration-1000 ease-out relative"
-                  style={{ width: `${progress}%` }}
-                >
-                  {/* Animated shine effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
-                  
-                  {/* Fuel-like bubbles effect */}
-                  {progress > 0 && (
-                    <div className="absolute inset-0">
-                      <div className="absolute top-0 left-1/4 w-1 h-1 bg-white/40 rounded-full animate-bounce delay-100"></div>
-                      <div className="absolute top-0 left-1/2 w-1 h-1 bg-white/40 rounded-full animate-bounce delay-300"></div>
-                      <div className="absolute top-0 left-3/4 w-1 h-1 bg-white/40 rounded-full animate-bounce delay-500"></div>
-                    </div>
-                  )}
-                </div>
+            <div className="space-y-2">
+              {/* Progress percentage - moved above the bar */}
+              <div className="flex justify-end">
+                <span className="text-sm font-semibold text-slate-300">
+                  {Math.round(progress)}%
+                </span>
               </div>
               
-              {/* Progress percentage */}
-              <div className="absolute -top-6 right-0 text-xs text-slate-400">
-                {Math.round(progress)}%
+              <div className="relative">
+                <div className="h-3 bg-slate-700 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-trivia-orange to-trivia-cyan rounded-full transition-all duration-1000 ease-out relative"
+                    style={{ width: `${progress}%` }}
+                  >
+                    {/* Animated shine effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+                    
+                    {/* Fuel-like bubbles effect */}
+                    {progress > 0 && (
+                      <div className="absolute inset-0">
+                        <div className="absolute top-0 left-1/4 w-1 h-1 bg-white/40 rounded-full animate-bounce delay-100"></div>
+                        <div className="absolute top-0 left-1/2 w-1 h-1 bg-white/40 rounded-full animate-bounce delay-300"></div>
+                        <div className="absolute top-0 left-3/4 w-1 h-1 bg-white/40 rounded-full animate-bounce delay-500"></div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
 
