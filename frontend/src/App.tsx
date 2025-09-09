@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AptosWalletAdapterProvider } from '@aptos-labs/wallet-adapter-react';
-import { Network } from '@aptos-labs/ts-sdk';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { Header } from '@/components/Header';
@@ -32,7 +31,6 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AptosWalletAdapterProvider 
-        dappConfig={{ network: Network.TESTNET }}
         autoConnect={true}
         onError={(error) => {
           console.error('Wallet adapter error:', error);

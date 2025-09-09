@@ -53,7 +53,6 @@ export function HomePage() {
   const { getClaimableNFTs } = useNFTClaim();
   const {
     claimEarnedPoints,
-    loading: tokenLoading,
     balance: q3pBalance,
     fetchBalance,
   } = useToken();
