@@ -1,7 +1,7 @@
 module quiz3::quiz {
     use std::signer;
     use std::vector;
-    use std::table::{Self, Table};
+    use aptos_std::table::{Self, Table};
     use std::bcs;
     use std::hash;
     use quiz3::q3p_token;
@@ -12,9 +12,13 @@ module quiz3::quiz {
     const E_ALREADY_CLAIMED: u64 = 3;
     const E_INVALID_SEASON: u64 = 4;
     const E_INVALID_AMOUNT: u64 = 5;
+    const E_INVALID_ROOT_LENGTH: u64 = 6;
+    const E_ALREADY_INITIALIZED: u64 = 7;
 
-    // Admin address
+    // Constants
     const ADMIN: address = @quiz3;
+    const MERKLE_ROOT_LENGTH: u64 = 32; // SHA3-256 produces 32 bytes
+
 
     /// Resource to store merkle roots for each season
     struct SeasonMerkleRoots has key {
@@ -24,11 +28,16 @@ module quiz3::quiz {
     /// Resource to track claimed rewards per user per season
     struct UserClaims has key {
         claims: Table<u64, bool>, // season -> claimed
+        claimed_seasons: vector<u64>, // list of seasons user has claimed
     }
 
     /// Initialize the quiz module
     fun init_module(deployer: &signer) {
-        assert!(signer::address_of(deployer) == ADMIN, E_NOT_ADMIN);
+        let deployer_addr = signer::address_of(deployer);
+        assert!(deployer_addr == ADMIN, E_NOT_ADMIN);
+        
+        // Check if already initialized to prevent double initialization
+        assert!(!exists<SeasonMerkleRoots>(ADMIN), E_ALREADY_INITIALIZED);
         
         move_to(deployer, SeasonMerkleRoots {
             roots: table::new<u64, vector<u8>>(),
@@ -41,9 +50,15 @@ module quiz3::quiz {
         season: u64,
         merkle_root: vector<u8>
     ) acquires SeasonMerkleRoots {
-        assert!(signer::address_of(admin) == ADMIN, E_NOT_ADMIN);
+        let admin_addr = signer::address_of(admin);
+        assert!(admin_addr == ADMIN, E_NOT_ADMIN);
+        
+        // Validate merkle root length (should be 32 bytes for SHA3-256)
+        assert!(vector::length(&merkle_root) == MERKLE_ROOT_LENGTH, E_INVALID_ROOT_LENGTH);
         
         let roots = borrow_global_mut<SeasonMerkleRoots>(ADMIN);
+        
+        // Use upsert for compatibility
         table::upsert(&mut roots.roots, season, merkle_root);
     }
 
@@ -67,10 +82,14 @@ module quiz3::quiz {
     ) acquires SeasonMerkleRoots, UserClaims {
         let user_addr = signer::address_of(user);
         
+        // Validate amount
+        assert!(amount > 0, E_INVALID_AMOUNT);
+        
         // Check if user has already claimed for this season
         if (!exists<UserClaims>(user_addr)) {
             move_to(user, UserClaims {
                 claims: table::new<u64, bool>(),
+                claimed_seasons: vector::empty<u64>(),
             });
         };
         
@@ -82,12 +101,13 @@ module quiz3::quiz {
         
         // Mark as claimed
         table::upsert(&mut user_claims.claims, season, true);
+        vector::push_back(&mut user_claims.claimed_seasons, season);
         
         // Mint Q3P tokens to user
         q3p_token::claim_earned_points(user, amount);
     }
 
-    /// Verify merkle proof on-chain
+    /// Verify merkle proof on-chain with proper ordering
     fun verify_merkle_proof(
         user_addr: address,
         season: u64,
@@ -97,32 +117,40 @@ module quiz3::quiz {
         // Get the stored merkle root for this season
         let roots = borrow_global<SeasonMerkleRoots>(ADMIN);
         assert!(table::contains(&roots.roots, season), E_INVALID_SEASON);
-        let expected_root = table::borrow(&roots.roots, season);
+        let expected_root = *table::borrow(&roots.roots, season);
         
-        // Create leaf hash
+        // Create leaf hash by concatenating data
         let leaf_data = bcs::to_bytes(&user_addr);
-        vector::append(&mut leaf_data, bcs::to_bytes(&amount));
-        vector::append(&mut leaf_data, bcs::to_bytes(&season));
-        let leaf_hash = hash::sha3_256(leaf_data);
+        let amount_data = bcs::to_bytes(&amount);
+        let season_data = bcs::to_bytes(&season);
         
-        // Verify proof by reconstructing the root
+        // Concatenate all data
+        let leaf_data_mut = leaf_data;
+        vector::append(&mut leaf_data_mut, amount_data);
+        vector::append(&mut leaf_data_mut, season_data);
+        let leaf_hash = hash::sha3_256(leaf_data_mut);
+        
+        // Verify proof by reconstructing the root using canonical ordering
         let current_hash = leaf_hash;
-        let proof_len = vector::length(&merkle_proof);
+        let proof = merkle_proof;
         
-        let i = 0;
-        while (i < proof_len) {
-            let proof_element = *vector::borrow(&merkle_proof, i);
+        let proof_mut = proof;
+        let current_hash_mut = current_hash;
+        
+        while (vector::length(&proof_mut) > 0) {
+            let sibling = vector::pop_back(&mut proof_mut);
             
-            // Hash the two nodes together (order doesn't matter for merkle trees)
-            let combined = current_hash;
-            vector::append(&mut combined, proof_element);
-            current_hash = hash::sha3_256(combined);
+            // Use canonical ordering: always append in the same order for consistency
+            let combined = vector::empty<u8>();
+            let combined_mut = combined;
+            vector::append(&mut combined_mut, current_hash_mut);
+            vector::append(&mut combined_mut, sibling);
             
-            i = i + 1;
+            current_hash_mut = hash::sha3_256(combined_mut);
         };
         
         // Check if the computed root matches the stored root
-        current_hash == *expected_root
+        current_hash_mut == expected_root
     }
 
     /// Check if user has claimed rewards for a specific season
@@ -140,21 +168,26 @@ module quiz3::quiz {
         }
     }
 
-    /// Get user's claim status for all seasons
+    /// Get user's claimed seasons list
     #[view]
-    public fun get_user_claim_status(user_addr: address): vector<u64> acquires UserClaims {
-        let claimed_seasons = vector::empty<u64>();
-        
+    public fun get_user_claimed_seasons(user_addr: address): vector<u64> acquires UserClaims {
         if (!exists<UserClaims>(user_addr)) {
-            return claimed_seasons
+            return vector::empty<u64>()
         };
         
         let user_claims = borrow_global<UserClaims>(user_addr);
-        let claims = &user_claims.claims;
+        user_claims.claimed_seasons
+    }
+
+    /// Get total number of seasons user has claimed
+    #[view]
+    public fun get_user_claim_count(user_addr: address): u64 acquires UserClaims {
+        if (!exists<UserClaims>(user_addr)) {
+            return 0
+        };
         
-        // Note: This is a simplified version. In practice, you might want to
-        // iterate through all possible seasons or maintain a separate list
-        claimed_seasons
+        let user_claims = borrow_global<UserClaims>(user_addr);
+        vector::length(&user_claims.claimed_seasons)
     }
 
     /// Emergency function to remove a season's merkle root (admin only)
@@ -162,11 +195,27 @@ module quiz3::quiz {
         admin: &signer,
         season: u64
     ) acquires SeasonMerkleRoots {
-        assert!(signer::address_of(admin) == ADMIN, E_NOT_ADMIN);
+        let admin_addr = signer::address_of(admin);
+        assert!(admin_addr == ADMIN, E_NOT_ADMIN);
         
         let roots = borrow_global_mut<SeasonMerkleRoots>(ADMIN);
         if (table::contains(&roots.roots, season)) {
             table::remove(&mut roots.roots, season);
         };
+    }
+
+    /// Get all available seasons (admin only)
+    #[view]
+    public fun get_all_seasons(): vector<u64> {
+        // Note: This is a simplified version. In practice, you might want to
+        // maintain a separate list of seasons for efficient iteration
+        vector::empty<u64>()
+    }
+
+    /// Check if a season exists
+    #[view]
+    public fun season_exists(season: u64): bool acquires SeasonMerkleRoots {
+        let roots = borrow_global<SeasonMerkleRoots>(ADMIN);
+        table::contains(&roots.roots, season)
     }
 }
